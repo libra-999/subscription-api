@@ -1,0 +1,45 @@
+package org.project.subscriptionservice.bean;
+
+import com.baomidou.mybatisplus.annotation.*;
+import jakarta.validation.constraints.Digits;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.project.subscriptionservice.bean.constant.CurrencyStatus;
+import org.project.subscriptionservice.bean.constant.PlanStatus;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+@Data
+@TableName("SUBPLANS")
+@KeySequence("SEQ_SUBPLANS")
+@NoArgsConstructor
+@AllArgsConstructor
+public class SubscriptionPlanEntity {
+
+    @TableId(type = IdType.AUTO)
+    private Integer id;
+
+    @TableField("name")
+    private String name;
+
+    @TableField("description")
+    private String description;
+
+    @TableField("price")
+    @Digits(fraction = 4, integer = 11)
+    private BigDecimal price;
+
+    @TableField("currency")
+    private CurrencyStatus currency;
+
+    @TableField("billing_cycle")
+    private PlanStatus billingCycle;
+
+    @TableField(value = "created_at", fill =  FieldFill.INSERT)
+    private Date createdAt;
+
+    @TableField(value = "updated_at", fill =   FieldFill.INSERT_UPDATE)
+    private Date updatedAt;
+}

@@ -1,0 +1,45 @@
+server:
+  port: 5002
+
+spring:
+  application:
+    name: Subscription & Billing
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:oracle:thin:@//${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${ORACLE_SERVICES:FREEPDB1}
+    username: ${ORACLE_USER:subscription}
+    password: ${ORACLE_PASSWORD:admin123}
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      minimum-idle: 15
+      maximum-pool-size: 300
+      idle-timeout: 300000
+      validation-timeout: 3000
+      connection-timeout: 3000
+      connection-test-query: SELECT 1 FROM DUAL
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:libra123}
+      timeout: 5s
+      lettuce:
+        pool:
+          max-active: 50
+          min-idle: 30
+          max-idle: 20
+          max-wait: 4s
+
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: assign-id
+    sequence:
+      datacenter-id: 1
+      worker-id: 1
+    banner: false
+  mapper-locations: mappers/*.xml
+  configuration:
+    map-underscore-to-camel-case: false
