@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.ibatis.type.JdbcType;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -24,14 +25,14 @@ public class BaseEntity {
     private Integer id;
 
     @CreatedDate
-    @TableField(value = "created_at", fill = FieldFill.INSERT)
+    @TableField(value = "created_at", fill = FieldFill.INSERT, jdbcType = JdbcType.TIMESTAMP)
     private Date createdAt;
 
     @LastModifiedDate
-    @TableField(value = "updated_at", fill =  FieldFill.INSERT_UPDATE)
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.TIMESTAMP)
     private Date updatedAt;
 
-    @TableField("deleted_at")
+    @TableField(value = "deleted_at", jdbcType = JdbcType.TIMESTAMP)
     private Date deletedAt;
 
     @CreatedBy

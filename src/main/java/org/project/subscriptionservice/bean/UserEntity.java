@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.project.subscriptionservice.bean.constant.AccountStatus;
+import org.project.subscriptionservice.bean.enums.AccountStatus;
 
 @Data
 @TableName("USERS")
@@ -31,7 +31,7 @@ public class UserEntity extends BaseEntity {
     private String job;
 
     @TableField(value = "locked")
-    private Boolean locked;
+    private Integer locked;
 
     @TableField(value = "active")
     private AccountStatus active;

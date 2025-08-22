@@ -5,11 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.validation.constraints.Digits;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.project.subscriptionservice.bean.constant.CurrencyStatus;
-import org.project.subscriptionservice.bean.constant.InvoiceStatus;
+import org.project.subscriptionservice.bean.enums.CurrencyStatus;
+import org.project.subscriptionservice.bean.enums.InvoiceStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

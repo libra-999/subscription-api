@@ -1,12 +1,10 @@
 package org.project.subscriptionservice.share.utility;
 
 import cn.hutool.captcha.CircleCaptcha;
-import cn.hutool.captcha.generator.CodeGenerator;
 import cn.hutool.core.img.GraphicsUtil;
 import cn.hutool.core.img.ImgUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
@@ -17,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class CaptchaUtil extends CircleCaptcha {
 
     public CaptchaUtil() {
-        super(200, 200, 5, 400);
+        super(200, 100, 4, 500);
     }
 
     @Override

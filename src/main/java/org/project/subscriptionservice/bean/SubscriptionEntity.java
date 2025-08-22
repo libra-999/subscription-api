@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.project.subscriptionservice.bean.constant.SubscriptionStatus;
+import org.project.subscriptionservice.bean.enums.SubscriptionStatus;
 
 import java.time.LocalDateTime;
 

@@ -5,8 +5,8 @@ import jakarta.validation.constraints.Digits;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.project.subscriptionservice.bean.constant.CurrencyStatus;
-import org.project.subscriptionservice.bean.constant.PlanStatus;
+import org.project.subscriptionservice.bean.enums.CurrencyStatus;
+import org.project.subscriptionservice.bean.enums.PlanStatus;
 
 import java.math.BigDecimal;
 import java.util.Date;
