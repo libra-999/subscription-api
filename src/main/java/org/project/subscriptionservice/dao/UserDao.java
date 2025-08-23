@@ -7,9 +7,12 @@ public interface UserDao extends Dao<UserEntity> {
 
    Paging<UserEntity> list(String keyword, Integer page, Integer size, String username);
 
+   UserEntity view(Integer id, String username);
+
    UserEntity getByUsername(String username);
 
    UserEntity getByEmail(String email);
 
    UserEntity getByPhone(String phone);
+
 }

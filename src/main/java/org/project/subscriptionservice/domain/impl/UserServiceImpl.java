@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @MetaHandler
     public UserEntity view(Integer id, MetaData metaData) {
-        UserEntity userEntity = userDao.view(id);
+        UserEntity userEntity = userDao.view(id,metaData.getUsername());
         if (userEntity == null) {
             throw  UserException.notFound();
         }
@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(Integer id, MetaData metaData) {
-
+        userDao.forceDelete(id);
     }
 
     private Map<String, String> MapUserFields(String token, UserDetail userDetail, Map<String, String> map) {

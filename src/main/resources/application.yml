@@ -18,7 +18,9 @@ spring:
       validation-timeout: 3000
       connection-timeout: 3000
       connection-test-query: SELECT 1 FROM DUAL
-
+  cert:
+    private-key: classpath:cert/private.pem
+    public-key: classpath:cert/public.pem
   data:
     redis:
       host: ${REDIS_HOST:localhost}
@@ -31,6 +33,10 @@ spring:
           min-idle: 30
           max-idle: 20
           max-wait: 4s
+  security:
+    user:
+      name: admin
+      password: admin888
 
 mybatis-plus:
   global-config:

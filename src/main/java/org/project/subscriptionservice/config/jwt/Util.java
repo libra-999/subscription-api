@@ -2,40 +2,45 @@ package org.project.subscriptionservice.config.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.subscriptionservice.config.security.UserDetail;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
+import java.time.Instant;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class Util {
 
     private final static SecretKey jwtSecret = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final static int jwtExpirationMs = 86400000;
+    private final JwtEncoder jwtEncoder;
+    private final JwtDecoder jwtDecoder;
+
 
     public String generateJwtToken(Authentication authentication) {
-
         UserDetail userPrincipal = (UserDetail) authentication.getPrincipal();
-        return Jwts.builder()
-            .setSubject((userPrincipal.getUsername()))
-            .setIssuedAt(new Date())
-            .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs)) // 1 day lifetime
-            .signWith(jwtSecret)
-            .compact();
+
+        Instant now = Instant.now();
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+            .subject(userPrincipal.getUsername())
+            .issuedAt(now)
+            .expiresAt(now.plusSeconds(864000))
+            .claim("scope", "ROLE_ADMIN")
+            .build();
+
+        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
-
     public String getUserNameFromJwtToken(String token) {
-        return Jwts.parserBuilder()
-            .setSigningKey(jwtSecret)
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .getSubject();
+        return jwtDecoder.decode(token).getSubject();
     }
 
     public boolean validateJwtToken(String authToken) {
@@ -46,9 +51,7 @@ public class Util {
             log.error("Invalid JWT token: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
             log.error("JWT token is expired: {}", e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            log.error("JWT token is unsupported: {}", e.getMessage());
-        } catch (IllegalArgumentException e) {
+        }catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty: {}", e.getMessage());
         }
 

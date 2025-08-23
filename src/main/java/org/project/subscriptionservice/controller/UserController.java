@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.project.subscriptionservice.share.controller.ControllerHandler.responsePaging;
-import static org.project.subscriptionservice.share.controller.ControllerHandler.responseSucceed;
+import static org.project.subscriptionservice.share.controller.ControllerHandler.*;
 
 @RequestMapping("/v1/api/users")
 @RestController
@@ -43,6 +42,12 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<HttpBodyResponse<UserDetailResponse>> view(@PathVariable Integer id){
         return responseSucceed(mapper.toDetail(service.view(id, new MetaData())));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Integer id){
+        service.delete(id, new MetaData());
+        return responseDeleted();
     }
 
 }

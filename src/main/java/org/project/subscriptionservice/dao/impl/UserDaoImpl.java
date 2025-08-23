@@ -40,25 +40,44 @@ public class UserDaoImpl extends DaoImpl<UserEntity, UserDaoMapper> implements U
             .totalPages((int) userPage.getPages()).build();
     }
 
+
+    public UserEntity view(Integer id, String username) {
+        return baseMapper.selectOne(
+            Wrappers.lambdaQuery(UserEntity.class).eq(UserEntity::getId, id)
+                .eq(UserEntity::getUsername, username)
+                .isNull(UserEntity::getDeletedAt)
+        );
+    }
+
     @Override
     public UserEntity getByUsername(String username) {
         return baseMapper.selectOne(
-            Wrappers.lambdaQuery(UserEntity.class).eq(UserEntity::getUsername, username).isNull(UserEntity::getDeletedAt)
+            Wrappers.lambdaQuery(UserEntity.class).eq(UserEntity::getUsername, username)
+                .isNull(UserEntity::getDeletedAt)
         );
     }
 
     @Override
     public UserEntity getByEmail(String email) {
         return baseMapper.selectOne(
-            Wrappers.lambdaQuery(UserEntity.class).eq(UserEntity::getEmail, email).isNull(UserEntity::getDeletedAt)
+            Wrappers.lambdaQuery(UserEntity.class).eq(UserEntity::getEmail, email)
+                .isNull(UserEntity::getDeletedAt)
         );
     }
 
     @Override
     public UserEntity getByPhone(String phone) {
         return baseMapper.selectOne(
-            Wrappers.lambdaQuery(UserEntity.class).eq(UserEntity::getPhone, phone).isNull(UserEntity::getDeletedAt)
+            Wrappers.lambdaQuery(UserEntity.class).eq(UserEntity::getPhone, phone)
+                .isNull(UserEntity::getDeletedAt)
         );
     }
 
+    @Override
+    public int forceDelete(Integer id) {
+        return baseMapper.delete(
+            Wrappers.lambdaQuery(UserEntity.class).eq(UserEntity::getId, id)
+                .isNull(UserEntity::getDeletedAt)
+        );
+    }
 }

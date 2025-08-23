@@ -20,6 +20,7 @@ public interface AuthControllerMapper {
 
     @Mapping(target = "createdDate", source = "createdAt")
     @Mapping(target = "updatedDate", source = "updatedAt")
+    @Mapping(target = "phone", source = "phone")
     UserDetailResponse toDetail(UserEntity users);
 
 }

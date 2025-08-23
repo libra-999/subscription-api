@@ -11,7 +11,7 @@ public class UserDetailResponse {
     private String username;
     private String active;
     private String job;
-    private String phone;
+    private int phone;
     private String locked;
     private String createdBy;
     private Date createdDate;

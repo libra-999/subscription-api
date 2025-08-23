@@ -6,10 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
+@NoArgsConstructor
 @Builder
 public class MetaData {
-
     private String username;
 }
