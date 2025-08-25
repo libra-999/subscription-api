@@ -75,6 +75,7 @@ public class UserServiceImpl implements UserService {
 
         UserEntity user = new UserEntity();
         CheckExistFields(user, request);
+        user.setLocked(0);
         user.setJob("Student");
         user.setPhone(request.getPhone());
         user.setCreatedAt(new Date());
@@ -175,6 +176,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(Integer id, MetaData metaData) {
         userDao.forceDelete(id);
+    }
+
+    @Override
+    public UserEntity invite(Integer id, Integer subscribeId) {
+        return null;
     }
 
     private Map<String, String> MapUserFields(String token, UserDetail userDetail, Map<String, String> map) {

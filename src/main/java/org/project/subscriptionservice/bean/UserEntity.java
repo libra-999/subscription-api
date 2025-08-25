@@ -36,4 +36,10 @@ public class UserEntity extends BaseEntity {
     @TableField(value = "active")
     private AccountStatus active;
 
+    @TableField("invite_code")
+    private String inviteCode;
+
+    @TableField("invited_by")
+    private Integer inviteBy;
+
 }

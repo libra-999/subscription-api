@@ -44,7 +44,7 @@
         from SUBSCRIPTION sub
         left join SUBPLANS sp on sp.ID = sub.PLAN_ID
         left join USERS u on u.ID = sub.USER_ID
-        where sub.DELETED_AT is null and u.ACTIVE = true
+        where sub.DELETED_AT is null and u.ACTIVE = true and u.LOCKED = false
         and sub.CREATED_BY = #{username}
 
         <if test="keyword != null and keyword != ''">
