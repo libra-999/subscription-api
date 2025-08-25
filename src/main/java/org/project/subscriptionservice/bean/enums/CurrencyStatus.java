@@ -1,6 +1,18 @@
 package org.project.subscriptionservice.bean.enums;
 
-public enum CurrencyStatus {
+import com.baomidou.mybatisplus.annotation.IEnum;
 
-    USD, KHR, GBP, JPY, INR, CNY
+public enum CurrencyStatus implements IEnum<String> {
+
+    USD, KHR, GBP, JPY, INR, CNY;
+    private final String value;
+
+    CurrencyStatus() {
+        this.value = this.name();
+    }
+
+    @Override
+    public String getValue() {
+        return value;
+    }
 }

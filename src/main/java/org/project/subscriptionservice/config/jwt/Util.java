@@ -1,7 +1,6 @@
 package org.project.subscriptionservice.config.jwt;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.subscriptionservice.config.security.UserDetail;
@@ -12,7 +11,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.time.Instant;
 
 @Slf4j
@@ -20,7 +18,6 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class Util {
 
-    private final static SecretKey jwtSecret = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
 
@@ -45,7 +42,7 @@ public class Util {
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parserBuilder().setSigningKey(jwtSecret).build().parse(authToken);
+            jwtDecoder.decode(authToken);
             return true;
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());

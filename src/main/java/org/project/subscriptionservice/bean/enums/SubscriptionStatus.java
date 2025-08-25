@@ -1,6 +1,19 @@
 package org.project.subscriptionservice.bean.enums;
 
-public enum SubscriptionStatus {
+import com.baomidou.mybatisplus.annotation.IEnum;
 
-    ACTIVE, CANCELLED, SUSPENDED, EXPIRED
+public enum SubscriptionStatus implements IEnum<String> {
+
+    ACTIVE, CANCELLED, SUSPENDED, EXPIRED;
+
+    private final String value;
+
+    SubscriptionStatus() {
+        this.value = this.name();
+    }
+
+    @Override
+    public String getValue() {
+        return value;
+    }
 }

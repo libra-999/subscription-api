@@ -12,6 +12,7 @@ import org.project.subscriptionservice.bean.enums.InvoiceStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @TableName("INVOICES")
@@ -38,4 +39,10 @@ public class InvoiceEntity extends BaseEntity {
 
     @TableField("status")
     private InvoiceStatus status;
+
+    @TableField(exist = false)
+    private SubscriptionEntity subscription;
+
+    @TableField(exist = false)
+    private List<PaymentEntity> payments;
 }

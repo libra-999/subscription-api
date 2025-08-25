@@ -54,7 +54,7 @@ public class SecurityConfig {
 
     @Bean
     public InMemoryUserDetailsManager inMemoryUser() {
-        return new InMemoryUserDetailsManager(User.withUsername(username).password(passwordEncoder().encode(password))
+        return new InMemoryUserDetailsManager(User.withUsername(username).password("{bcrypt}".concat(password))
             .roles("ADMIN").build());
     }
 
@@ -94,7 +94,7 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain tokenSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .securityMatcher("/v1/api/auth/**", "/v1/api/captcha", "/v1/api/image-code")
+            .securityMatcher("/v1/api/auth/**", "/v1/api/captcha", "/v1/api/image-code, /v1/api/public")
             .exceptionHandling(error -> error.authenticationEntryPoint(unauthorizedHandler))
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

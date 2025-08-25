@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 import org.project.subscriptionservice.bean.enums.SubscriptionStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @TableName("SUBSCRIPTIONS")
 @KeySequence("SEQ_SUBSCRIPTION")
 public class SubscriptionEntity extends BaseEntity {
@@ -31,4 +32,20 @@ public class SubscriptionEntity extends BaseEntity {
 
     @TableField("plan_end")
     private LocalDateTime planEnd;
+
+    @TableField("auto_renew")
+    private Boolean autoRenew;
+
+    @TableField("is_trial")
+    private Boolean isTrial;
+
+    @TableField(exist = false)
+    private UserEntity user;
+
+    @TableField(exist = false)
+    private SubscriptionPlanEntity subscriptionPlan;
+
+    @TableField(exist = false)
+    private List<InvoiceEntity> invoices;
+
 }

@@ -15,6 +15,7 @@ import org.project.subscriptionservice.config.security.UserDetail;
 import org.project.subscriptionservice.context.RedisKeyConstant;
 import org.project.subscriptionservice.controller.request.Login;
 import org.project.subscriptionservice.controller.request.Register;
+import org.project.subscriptionservice.controller.request.UserCreation;
 import org.project.subscriptionservice.dao.UserDao;
 import org.project.subscriptionservice.domain.exception.UserException;
 import org.project.subscriptionservice.domain.service.RedisService;
@@ -31,6 +32,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.*;
 import java.util.*;
@@ -59,23 +61,33 @@ public class UserServiceImpl implements UserService {
     @Override
     @MetaHandler
     public UserEntity view(Integer id, MetaData metaData) {
-        UserEntity userEntity = userDao.view(id,metaData.getUsername());
-        if (userEntity == null) {
-            throw  UserException.notFound();
+        try{
+            return userDao.view(id, metaData.getUsername());
+        }catch (HttpException e){
+            throw UserException.notFound();
         }
-        return userEntity;
+    }
+
+    @Override
+    @MetaHandler
+    @Transactional(rollbackFor = HttpException.class)
+    public UserEntity create(UserCreation request, MetaData metaData) {
+
+        UserEntity user = new UserEntity();
+        CheckExistFields(user, request);
+        user.setJob("Student");
+        user.setPhone(request.getPhone());
+        user.setCreatedAt(new Date());
+        user.setCreatedBy(metaData.getUsername());
+
+        userDao.create(user);
+        return user;
     }
 
     @Override
     @SneakyThrows
+    @Transactional(rollbackFor = HttpException.class)
     public Map<String, String> register(Register entity) {
-
-        if (userDao.getByUsername(entity.getUsername()) != null)
-            throw UserException.alreadyExists();
-        if (userDao.getByEmail(entity.getEmail()) != null)
-            throw new HttpException(HttpStatus.CONFLICT, "Email already exists");
-        if (userDao.getByPhone(entity.getPhone()) != null)
-            throw new HttpException(HttpStatus.CONFLICT, "Phone already exists");
 
         UserEntity user = new UserEntity();
         user.setUsername(entity.getUsername());
@@ -90,7 +102,7 @@ public class UserServiceImpl implements UserService {
 
         userDao.create(user);
 
-        Map<String , String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(entity.getUsername(), entity.getPassword())
         );
@@ -102,7 +114,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String , String> login(Login entity) {
+    public Map<String, String> login(Login entity) {
         String code = redisService.getValue(RedisKeyConstant.CAPTCHA + entity.getUuid());
         if (Objects.isNull(code) || !Objects.equals(entity.getCode(), code)) {
             throw UserException.invalidCode();
@@ -173,5 +185,20 @@ public class UserServiceImpl implements UserService {
         map.put("job", userDetail.getJob());
         map.put("active", userDetail.getActive().toString());
         return map;
+    }
+
+    private void CheckExistFields(UserEntity entity, UserCreation request) {
+        if (userDao.getByUsername(request.getUsername()) != null)
+            throw UserException.alreadyExists();
+        if (userDao.getByEmail(request.getEmail()) != null)
+            throw new HttpException(HttpStatus.CONFLICT, "Email already exists");
+        if (userDao.getByPhone(request.getPhone()) != null)
+            throw new HttpException(HttpStatus.CONFLICT, "Phone already exists");
+
+        entity.setUsername(request.getUsername());
+        entity.setPassword(passwordEncoder.encode(request.getPassword()));
+        entity.setEmail(request.getEmail());
+        entity.setActive(AccountStatus.ACTIVE);
+        entity.setLocked(0);
     }
 }

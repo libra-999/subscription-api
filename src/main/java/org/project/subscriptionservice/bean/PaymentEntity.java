@@ -13,6 +13,7 @@ import org.project.subscriptionservice.bean.enums.PaymentStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -44,5 +45,9 @@ public class PaymentEntity extends BaseEntity {
 
     @TableField("payment_date")
     private LocalDateTime paymentDate;
+
+    @TableField(exist = false)
+    private InvoiceEntity invoice;
+
 
 }

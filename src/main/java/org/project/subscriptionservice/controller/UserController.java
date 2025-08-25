@@ -1,8 +1,10 @@
 package org.project.subscriptionservice.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.project.subscriptionservice.bean.UserEntity;
 import org.project.subscriptionservice.controller.mapper.AuthControllerMapper;
+import org.project.subscriptionservice.controller.request.UserCreation;
 import org.project.subscriptionservice.controller.response.UserDetailResponse;
 import org.project.subscriptionservice.controller.response.UserListResponse;
 import org.project.subscriptionservice.domain.service.UserService;
@@ -37,6 +39,11 @@ public class UserController {
                 paging.getTotalPages()
             )
         );
+    }
+
+    @PostMapping
+    public ResponseEntity<HttpBodyResponse<UserListResponse>> register(@Valid @RequestBody UserCreation request) {
+        return responseCreated(mapper.toList(service.create(request,new MetaData())));
     }
 
     @GetMapping("/{id}")

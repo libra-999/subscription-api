@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Register {
+public class UserCreation {
 
     @NotNull
     @NotBlank(message = "Username is required")
@@ -23,9 +23,6 @@ public class Register {
     @NotBlank(message = "Phone is required")
     @Pattern(regexp = "^0[0-9]{8,9}$", message = "Invalid phone number input")
     private String phone;
-
-    @NotNull
-    private String job;
 
     @NotNull
     @Pattern(regexp = "^.{8}$" , message = "Password must be less than 8")

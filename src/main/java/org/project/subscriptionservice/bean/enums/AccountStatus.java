@@ -7,6 +7,7 @@ public enum AccountStatus implements IEnum<String> {
     ACTIVE, SUSPENDED, DELETED;
 
     private final String value;
+
     AccountStatus() {
         this.value = this.name();
     }

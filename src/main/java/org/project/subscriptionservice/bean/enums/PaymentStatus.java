@@ -1,6 +1,19 @@
 package org.project.subscriptionservice.bean.enums;
 
-public enum PaymentStatus {
+import com.baomidou.mybatisplus.annotation.IEnum;
 
-    SUCCESS, FAILED, PENDING
+public enum PaymentStatus implements IEnum<String> {
+
+    SUCCESS, FAILED, PENDING;
+
+    private final String value;
+
+    PaymentStatus() {
+        this.value = this.name();
+    }
+
+    @Override
+    public String getValue() {
+        return value;
+    }
 }

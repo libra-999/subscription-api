@@ -5,11 +5,13 @@ import jakarta.validation.constraints.Digits;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.ibatis.type.JdbcType;
 import org.project.subscriptionservice.bean.enums.CurrencyStatus;
 import org.project.subscriptionservice.bean.enums.PlanStatus;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @TableName("SUBPLANS")
@@ -18,11 +20,14 @@ import java.util.Date;
 @AllArgsConstructor
 public class SubscriptionPlanEntity {
 
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.AUTO, value = "id")
     private Integer id;
 
     @TableField("name")
     private String name;
+
+    @TableField("plan_ref")
+    private String planRef;
 
     @TableField("description")
     private String description;
@@ -37,9 +42,12 @@ public class SubscriptionPlanEntity {
     @TableField("billing_cycle")
     private PlanStatus billingCycle;
 
-    @TableField(value = "created_at", fill =  FieldFill.INSERT)
+    @TableField(exist = false)
+    private List<SubscriptionEntity>  subscriptions;
+
+    @TableField(value = "created_at", fill =  FieldFill.INSERT, jdbcType = JdbcType.TIMESTAMP)
     private Date createdAt;
 
-    @TableField(value = "updated_at", fill =   FieldFill.INSERT_UPDATE)
+    @TableField(value = "updated_at", fill =   FieldFill.INSERT_UPDATE, jdbcType = JdbcType.TIMESTAMP)
     private Date updatedAt;
 }

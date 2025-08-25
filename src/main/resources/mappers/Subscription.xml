@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.project.subscriptionservice.dao.mapper.SubDaoMapper">
+
+    <resultMap id="subscription" type="org.project.subscriptionservice.bean.SubscriptionEntity">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="plan_id" property="planId" />
+        <result column="status" property="status"/>
+        <result column="plan_start" property="planStart" />
+        <result column="plan_end" property="planEnd"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted_at" property="deletedAt"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="deleted_by" property="deletedBy"/>
+
+        <association property="user" javaType="org.project.subscriptionservice.bean.UserEntity">
+            <id column="id" property="id"/>
+            <result column="username" property="username" />
+            <result column="password" property="password" />
+            <result column="email" property="email" />
+            <result column="phone" property="phone" />
+            <result column="job" property="job" />
+            <result column="locked" property="locked" />
+            <result column="active" property="active"/>
+        </association>
+
+        <association property="subscriptionPlan" javaType="org.project.subscriptionservice.bean.SubscriptionPlanEntity">
+            <id column="id" property="id"/>
+            <result column="name" property="name" />
+            <result column="plan_ref" property="planRef" />
+            <result column="description" property="description" />
+            <result column="price" property="price" />
+            <result column="currency" property="currency" />
+            <result column="billing_cycle" property="billingCycle" />
+        </association>
+    </resultMap>
+
+    <select id="listAll" resultMap="subscription">
+        select sub.*, sp.* , u.*
+        from SUBSCRIPTION sub
+        left join SUBPLANS sp on sp.ID = sub.PLAN_ID
+        left join USERS u on u.ID = sub.USER_ID
+        where sub.DELETED_AT is null and u.ACTIVE = true
+        and sub.CREATED_BY = #{username}
+
+        <if test="keyword != null and keyword != ''">
+            and (
+            lower(sp.NAME) like concat('%', #{keyword}, '%') or
+            lower(u.username) like concat ('%' , #{keyword}, '%') or
+            lower(u.email) like concat ('%', #{keyword}, '%') or
+            lower(u.job) like concat ('%', #{keyword}, '%')
+            )
+        </if>
+
+        <if test="status != null">
+            and sub.STATUS = #{status}
+        </if>
+
+        <if test="startDate != null">
+            and sub.CREATED_AT &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            and sub.CREATED_AT &lt;= #{endDate}
+        </if>
+
+        order by u.ID DESC;
+    </select>
+</mapper>

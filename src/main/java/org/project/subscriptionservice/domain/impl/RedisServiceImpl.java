@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class RedisServiceFacade implements RedisService {
+public class RedisServiceImpl implements RedisService {
 
     private final StringRedisTemplate template;
 

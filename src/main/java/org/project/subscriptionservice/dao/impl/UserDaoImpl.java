@@ -25,7 +25,7 @@ public class UserDaoImpl extends DaoImpl<UserEntity, UserDaoMapper> implements U
             queryWrapper
                 .like(UserEntity::getUsername, keyword).or()
                 .like(UserEntity::getEmail, keyword).or()
-                .like(UserEntity::getPhone, keyword).or();
+                .like(UserEntity::getPhone, keyword);
         }
         if (Objects.nonNull(username)) {
             queryWrapper.eq(UserEntity::getCreatedBy, username);

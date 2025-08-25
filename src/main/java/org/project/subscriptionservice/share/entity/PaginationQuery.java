@@ -23,7 +23,7 @@ public class PaginationQuery {
     }
 
     public Integer getSize() {
-        return Objects.nonNull(size) ? size : 20;
+        return Objects.nonNull(size) ? size : 10;
     }
 
 }
