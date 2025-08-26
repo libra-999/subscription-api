@@ -20,4 +20,8 @@ public class AddressRequest {
     @NotNull(message = "Zip code is required")
     private Integer zipCode;
 
+    @NotBlank(message = "Zip code is required")
+    @NotNull
+    private String country;
+
 }

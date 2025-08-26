@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 public class SubPlanResponse {
 
     private Integer id;
+    private String planRef;
     private String name;
     private String currency;
     private BigDecimal price;

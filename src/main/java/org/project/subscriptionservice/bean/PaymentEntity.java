@@ -13,7 +13,6 @@ import org.project.subscriptionservice.bean.enums.PaymentStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -24,6 +23,9 @@ public class PaymentEntity extends BaseEntity {
 
     @TableField("invoice_id")
     private Integer invoiceId;
+
+    @TableField("user_id")
+    private Integer userId;
 
     @TableField("reference")
     private String reference;
@@ -38,7 +40,20 @@ public class PaymentEntity extends BaseEntity {
     @TableField("payment_method")
     private PaymentMethodStatus paymentMethod;
 
-    private AddressEntity address;
+    @TableField(value = "street")
+    private String street;
+
+    @TableField(value = "city")
+    private String city;
+
+    @TableField(value = "state")
+    private String state;
+
+    @TableField(value = "zip_code")
+    private Integer zipCode;
+
+    @TableField("country")
+    private String country;
 
     @TableField("status")
     private PaymentStatus status;
@@ -49,5 +64,6 @@ public class PaymentEntity extends BaseEntity {
     @TableField(exist = false)
     private InvoiceEntity invoice;
 
-
+    @TableField(exist = false)
+    private UserEntity user;
 }

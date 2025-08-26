@@ -5,4 +5,5 @@ import org.project.subscriptionservice.bean.SubscriptionPlanEntity;
 
 public interface SubPlanDaoMapper extends BaseMapper<SubscriptionPlanEntity> {
 
+    SubscriptionPlanEntity findSubPlan(Integer id);
 }

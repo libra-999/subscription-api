@@ -32,6 +32,9 @@ public class SubscriptionPlanEntity {
     @TableField("description")
     private String description;
 
+    @TableField("max_participate")
+    private Integer maxParticipate;
+
     @TableField("price")
     @Digits(fraction = 4, integer = 11)
     private BigDecimal price;

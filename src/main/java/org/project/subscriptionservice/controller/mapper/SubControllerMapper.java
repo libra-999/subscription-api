@@ -1,13 +1,11 @@
 package org.project.subscriptionservice.controller.mapper;
 
 
-import org.mapstruct.Mapper;
-import org.mapstruct.NullValueCheckStrategy;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 import org.project.subscriptionservice.bean.SubscriptionEntity;
-import org.project.subscriptionservice.controller.response.SubDetailResponse;
-import org.project.subscriptionservice.controller.response.SubResponse;
+import org.project.subscriptionservice.bean.SubscriptionPlanEntity;
+import org.project.subscriptionservice.bean.UserEntity;
+import org.project.subscriptionservice.controller.response.*;
 
 @Mapper(
     nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
@@ -16,8 +14,17 @@ import org.project.subscriptionservice.controller.response.SubResponse;
 )
 public interface SubControllerMapper {
 
+    @Mapping(target = "planStart", source = "planStart")
+    @Mapping(target = "planEnd", source = "planEnd")
+    @Mapping(target = "plan", source = "subscriptionPlan")
     SubResponse fromList(SubscriptionEntity entity);
 
+    @Mapping(target = "plan", source = "subscriptionPlan")
     SubDetailResponse fromDetail(SubscriptionEntity entity);
+
+    @Mapping(target = "period", source = "billingCycle")
+    SubPlanResponse from(SubscriptionPlanEntity entity);
+
+    UserDetailResponse fromTo(UserEntity entity);
 
 }

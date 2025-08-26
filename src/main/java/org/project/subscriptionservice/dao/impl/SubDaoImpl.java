@@ -10,6 +10,7 @@ import org.project.subscriptionservice.share.entity.PageNumber;
 import org.project.subscriptionservice.share.entity.Paging;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Repository
@@ -32,11 +33,11 @@ public class SubDaoImpl extends DaoImpl<SubscriptionEntity, SubDaoMapper> implem
 
     @Override
     public SubscriptionEntity view(Integer id, String username) {
-        return baseMapper.selectOne(
-            Wrappers.lambdaQuery(SubscriptionEntity.class)
-                .eq(SubscriptionEntity::getId, id)
-                .eq(SubscriptionEntity::getCreatedBy, username)
-                .isNull(SubscriptionEntity::getDeletedAt)
-        );
+        return baseMapper.findById(username, id);
+    }
+
+    @Override
+    public boolean checkEmail(Integer id, Integer userId, LocalDateTime time) {
+        return false;
     }
 }

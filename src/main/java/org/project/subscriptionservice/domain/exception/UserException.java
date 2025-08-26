@@ -32,4 +32,12 @@ public class UserException extends HttpException {
     public static UserException invalidCode(){
         return new UserException(HttpStatus.BAD_REQUEST, "Invalid code");
     }
+
+    public static UserException invalidEmail(){
+        return new UserException(HttpStatus.BAD_REQUEST, "Invalid email");
+    }
+
+    public static UserException invalidPhone(){
+        return new UserException(HttpStatus.BAD_REQUEST, "Invalid phone");
+    }
 }

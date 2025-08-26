@@ -25,6 +25,8 @@ public class SubPlanCreation {
     @Pattern(regexp = "^(MONTHLY|YEAR|WEEKLY|DAY)$", message = "Invalided plan")
     private String period;
 
+    @NotNull(message = "Participate is required")
+    private Integer participate;
     private String description;
 
 }

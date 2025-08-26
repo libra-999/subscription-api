@@ -9,6 +9,7 @@ import org.project.subscriptionservice.controller.response.SubResponse;
 import org.project.subscriptionservice.domain.service.SubService;
 import org.project.subscriptionservice.share.entity.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,10 +49,20 @@ public class SubController {
         return responseSucceed(mapper.fromDetail(service.view(id, new MetaData())));
     }
 
-
     @PostMapping
-    public ResponseEntity<HttpBodyResponse<SubDetailResponse>> create(@RequestBody SubCreation request) {
+    public ResponseEntity<HttpBodyResponse<SubDetailResponse>> create(@RequestBody @Validated SubCreation request) {
         return responseCreated(mapper.fromDetail(service.create(request, new MetaData())));
+    }
+
+    @PatchMapping("cancel/{userId}/{subId}")
+    public ResponseEntity<HttpBodyResponse<SubResponse>> cancelSub(@PathVariable Integer userId, @PathVariable Integer subId) {
+        return responseSucceed(mapper.fromList(service.cancel(userId, subId, new MetaData())));
+    }
+
+    @PostMapping("/invite-user/{subId}")
+    public ResponseEntity<HttpBodyResponse<?>> invite(@RequestBody String[] emails, @PathVariable Integer subId) {
+        service.invite(subId, emails, new MetaData());
+        return responseSucceed();
     }
 
 }

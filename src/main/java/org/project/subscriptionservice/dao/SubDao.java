@@ -4,6 +4,7 @@ import org.project.subscriptionservice.bean.SubscriptionEntity;
 import org.project.subscriptionservice.bean.enums.SubscriptionStatus;
 import org.project.subscriptionservice.share.entity.Paging;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public interface SubDao extends Dao<SubscriptionEntity> {
@@ -17,4 +18,6 @@ public interface SubDao extends Dao<SubscriptionEntity> {
                                     String username);
 
     SubscriptionEntity view(Integer id, String username);
+
+    boolean checkEmail(Integer id, Integer userId , LocalDateTime time);
 }

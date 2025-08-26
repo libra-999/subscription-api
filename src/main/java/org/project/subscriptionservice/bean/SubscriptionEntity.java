@@ -14,12 +14,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("SUBSCRIPTIONS")
+@TableName("SUBSCRIPTION")
 @KeySequence("SEQ_SUBSCRIPTION")
 public class SubscriptionEntity extends BaseEntity {
-
-    @TableField("user_id")
-    private Integer userId;
 
     @TableField("plan_id")
     private Integer planId;
@@ -40,7 +37,7 @@ public class SubscriptionEntity extends BaseEntity {
     private Boolean isTrial;
 
     @TableField(exist = false)
-    private UserEntity user;
+    private List<SubscriptionMemberEntity> members;
 
     @TableField(exist = false)
     private SubscriptionPlanEntity subscriptionPlan;

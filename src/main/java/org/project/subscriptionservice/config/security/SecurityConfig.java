@@ -94,7 +94,7 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain tokenSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .securityMatcher("/v1/api/auth/**", "/v1/api/captcha", "/v1/api/image-code, /v1/api/public")
+            .securityMatcher("/v1/api/auth/**", "/v1/api/captcha", "/v1/api/image-code, /v1/api/front")
             .exceptionHandling(error -> error.authenticationEntryPoint(unauthorizedHandler))
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

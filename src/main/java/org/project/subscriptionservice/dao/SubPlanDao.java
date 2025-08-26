@@ -8,4 +8,8 @@ public interface SubPlanDao extends Dao<SubscriptionPlanEntity> {
     Paging<SubscriptionPlanEntity> list(String keyword, Integer page, Integer size, String username);
 
     SubscriptionPlanEntity getAlreadyName(String name);
+
+    SubscriptionPlanEntity getPlanRef(String ref);
+
+    SubscriptionPlanEntity findSubPlan(Integer id);
 }

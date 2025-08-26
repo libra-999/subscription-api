@@ -39,7 +39,7 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
     @Override
     public SubscriptionPlanEntity view(Integer id, MetaData metaData) {
         try {
-            return subPlanDao.view(id);
+            return subPlanDao.findSubPlan(id);
         } catch (HttpException e) {
             throw UserException.notFound();
         }
@@ -60,6 +60,7 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
         entity.setDescription(request.getDescription());
         entity.setPrice(BigDecimal.valueOf(request.getPrice()));
         entity.setCurrency(CurrencyStatus.valueOf(request.getCurrency()));
+        entity.setMaxParticipate(request.getParticipate());
         entity.setBillingCycle(PlanStatus.valueOf(request.getPeriod()));
         entity.setPlanRef(ref);
         entity.setCreatedAt(new Date());

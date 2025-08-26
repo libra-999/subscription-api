@@ -17,4 +17,5 @@ public interface SubDaoMapper extends BaseMapper<SubscriptionEntity> {
                                      SubscriptionStatus status,
                                      String username);
 
+    SubscriptionEntity findById(String username , Integer id);
 }

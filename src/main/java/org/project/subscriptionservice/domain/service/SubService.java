@@ -13,4 +13,8 @@ public interface SubService {
     SubscriptionEntity view(Integer id, MetaData metaData);
 
     SubscriptionEntity create(SubCreation request, MetaData metaData);
+
+    SubscriptionEntity cancel(Integer id, Integer userId , MetaData metaData);
+
+    void invite(Integer id, String [] email, MetaData metaData);
 }

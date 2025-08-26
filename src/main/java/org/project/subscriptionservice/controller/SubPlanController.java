@@ -19,15 +19,14 @@ import java.util.List;
 import static org.project.subscriptionservice.share.controller.ControllerHandler.*;
 
 @RestController
-@RequestMapping("v1/api/public/subscription-plans")
+@RequestMapping("v1/api/")
 @RequiredArgsConstructor
 public class SubPlanController {
 
     private final SubPlanControllerMapper mapper;
     private final SubscriptionPlanService service;
 
-
-    @GetMapping
+    @GetMapping("front/subscription-plans")
     public ResponseEntity<HttpBodyResponse<List<SubPlanResponse>>> list(@RequestParam(required = false) Integer page,
                                                                         @RequestParam(required = false) Integer size,
                                                                         @RequestParam(required = false) String keyword) {
@@ -45,17 +44,17 @@ public class SubPlanController {
         );
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("front/subscription-plans/{id}")
     public ResponseEntity<HttpBodyResponse<SubPlanDetailResponse>> view(@PathVariable Integer id) {
         return responseSucceed(mapper.fromDetail(service.view(id, new MetaData())));
     }
 
-    @PostMapping
+    @PostMapping("subscription-plans")
     public ResponseEntity<HttpBodyResponse<SubPlanDetailResponse>> create(@Validated @RequestBody SubPlanCreation request) {
         return responseCreated(mapper.fromDetail(service.create(request, new MetaData())));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("subscription-plans/{id}")
     public ResponseEntity<HttpBodyResponse<SubPlanDetailResponse>> update(@PathVariable Integer id,
                                                                           @Validated @RequestBody SubPlanUpdated request){
         return responseSucceed(mapper.fromDetail(service.update(id, request, new MetaData())));

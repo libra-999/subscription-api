@@ -15,12 +15,12 @@ public interface AuthControllerMapper {
 
     AuthResponse to(UserEntity user);
 
-    @Mapping(target = "createdDate", source = "createdAt")
     UserListResponse toList(UserEntity users);
 
-    @Mapping(target = "createdDate", source = "createdAt")
-    @Mapping(target = "updatedDate", source = "updatedAt")
     @Mapping(target = "phone", source = "phone")
+    @Mapping(target = "createdBy", source = "createdBy")
+    @Mapping(target = "updatedBy", source = "updatedBy")
+    @Mapping(target = "locked", source = "locked")
     UserDetailResponse toDetail(UserEntity users);
 
 }

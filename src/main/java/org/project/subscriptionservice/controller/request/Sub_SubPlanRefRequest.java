@@ -7,5 +7,4 @@ public class Sub_SubPlanRefRequest {
 
     private Integer plan_id;
     private String ref;
-
 }

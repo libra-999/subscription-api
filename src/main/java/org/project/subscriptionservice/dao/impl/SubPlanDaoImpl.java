@@ -34,16 +34,23 @@ public class SubPlanDaoImpl extends DaoImpl<SubscriptionPlanEntity, SubPlanDaoMa
     }
 
     @Override
-    public SubscriptionPlanEntity view(Integer id) {
-        baseMapper.selectById(id);
-        return super.view(id);
-    }
-
-    @Override
     public SubscriptionPlanEntity getAlreadyName(String name) {
         return baseMapper.selectOne(
             Wrappers.lambdaQuery(SubscriptionPlanEntity.class)
                 .eq(SubscriptionPlanEntity::getName, name)
         );
+    }
+
+    @Override
+    public SubscriptionPlanEntity getPlanRef(String ref) {
+        return baseMapper.selectOne(
+            Wrappers.lambdaQuery(SubscriptionPlanEntity.class)
+                .eq(SubscriptionPlanEntity::getPlanRef, ref)
+        );
+    }
+
+    @Override
+    public SubscriptionPlanEntity findSubPlan(Integer id) {
+        return baseMapper.findSubPlan(id);
     }
 }

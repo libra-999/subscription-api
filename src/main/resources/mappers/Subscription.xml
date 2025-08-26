@@ -5,7 +5,6 @@
 
     <resultMap id="subscription" type="org.project.subscriptionservice.bean.SubscriptionEntity">
         <id column="id" property="id"/>
-        <result column="user_id" property="userId"/>
         <result column="plan_id" property="planId" />
         <result column="status" property="status"/>
         <result column="plan_start" property="planStart" />
@@ -16,17 +15,6 @@
         <result column="created_by" property="createdBy"/>
         <result column="updated_by" property="updatedBy"/>
         <result column="deleted_by" property="deletedBy"/>
-
-        <association property="user" javaType="org.project.subscriptionservice.bean.UserEntity">
-            <id column="id" property="id"/>
-            <result column="username" property="username" />
-            <result column="password" property="password" />
-            <result column="email" property="email" />
-            <result column="phone" property="phone" />
-            <result column="job" property="job" />
-            <result column="locked" property="locked" />
-            <result column="active" property="active"/>
-        </association>
 
         <association property="subscriptionPlan" javaType="org.project.subscriptionservice.bean.SubscriptionPlanEntity">
             <id column="id" property="id"/>
@@ -44,7 +32,7 @@
         from SUBSCRIPTION sub
         left join SUBPLANS sp on sp.ID = sub.PLAN_ID
         left join USERS u on u.ID = sub.USER_ID
-        where sub.DELETED_AT is null and u.ACTIVE = true and u.LOCKED = false
+        where sub.DELETED_AT is null and u.ACTIVE = 'ACTIVE' and u.LOCKED = 0
         and sub.CREATED_BY = #{username}
 
         <if test="keyword != null and keyword != ''">
@@ -67,6 +55,17 @@
             and sub.CREATED_AT &lt;= #{endDate}
         </if>
 
-        order by u.ID DESC;
+        order by u.ID DESC
+    </select>
+
+    <select id="findById" resultMap="subscription">
+
+        select sub.*, sp.*
+        from SUBSCRIPTION sub
+                 left join SUBPLANS sp on sp.ID = sub.PLAN_ID
+        where sub.DELETED_AT is null
+          and sub.CREATED_BY = #{username} and sub.ID = #{id}
+
+
     </select>
 </mapper>
