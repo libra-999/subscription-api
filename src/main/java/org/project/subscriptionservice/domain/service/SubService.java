@@ -18,4 +18,6 @@ public interface SubService {
     SubscriptionEntity cancel(Integer id, Integer userId , MetaData metaData);
 
     void invite(String id, InviteUserRequest request, MetaData metaData);
+
+    SubscriptionEntity checkRenew();
 }

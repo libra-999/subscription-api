@@ -49,8 +49,6 @@ spring:
           auth: true
           starttls:
             enable: true
-
-
 mybatis-plus:
   global-config:
     db-config:

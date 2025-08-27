@@ -252,6 +252,11 @@ public class SubServiceImpl implements SubService {
         }
     }
 
+    @Override
+    public SubscriptionEntity checkRenew() {
+        return null;
+    }
+
     @SneakyThrows
     private static Date convertStringToDate(String date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

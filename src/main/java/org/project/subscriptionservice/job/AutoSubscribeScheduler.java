@@ -11,7 +11,6 @@ public class AutoSubscribeScheduler {
 
     private final Scheduler scheduler;
 
-
     @PostConstruct
     public void AutoSubscribeScheduleJobs() {
     }
