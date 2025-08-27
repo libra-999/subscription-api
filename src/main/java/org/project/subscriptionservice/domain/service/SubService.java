@@ -1,6 +1,7 @@
 package org.project.subscriptionservice.domain.service;
 
 import org.project.subscriptionservice.bean.SubscriptionEntity;
+import org.project.subscriptionservice.controller.request.InviteUserRequest;
 import org.project.subscriptionservice.controller.request.SubCreation;
 import org.project.subscriptionservice.share.entity.MetaData;
 import org.project.subscriptionservice.share.entity.PaginationQuery;
@@ -16,5 +17,5 @@ public interface SubService {
 
     SubscriptionEntity cancel(Integer id, Integer userId , MetaData metaData);
 
-    void invite(Integer id, String [] email, MetaData metaData);
+    void invite(String id, InviteUserRequest request, MetaData metaData);
 }

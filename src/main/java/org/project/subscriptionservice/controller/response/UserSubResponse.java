@@ -7,11 +7,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor(staticName = "of")
 @NoArgsConstructor
-public class SubResponse {
+public class UserSubResponse {
 
     private Integer id;
-    private SubPlanResponse plan;
-    private String planStart;
-    private String planEnd;
-    private String createdBy;
+    private String email;
+    private String username;
+    private String active;
+    private String job;
+    private String role;
+    private boolean subscribeStatus;
 }

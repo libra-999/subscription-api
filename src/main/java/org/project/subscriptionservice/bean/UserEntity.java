@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.project.subscriptionservice.bean.enums.AccountStatus;
 
+import java.math.BigDecimal;
+
 @Data
 @TableName("USERS")
 @KeySequence("SEQ_USERS")
@@ -29,6 +31,9 @@ public class UserEntity extends BaseEntity {
 
     @TableField(value = "job")
     private String job;
+
+    @TableField(value = "amount")
+    private BigDecimal balance;
 
     @TableField(value = "locked")
     private Integer locked;

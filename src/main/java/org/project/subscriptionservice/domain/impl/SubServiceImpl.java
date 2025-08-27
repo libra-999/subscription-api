@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.project.subscriptionservice.aop.MetaHandler;
 import org.project.subscriptionservice.bean.*;
 import org.project.subscriptionservice.bean.enums.*;
+import org.project.subscriptionservice.context.PushEmailService;
+import org.project.subscriptionservice.controller.request.InviteUserRequest;
 import org.project.subscriptionservice.controller.request.SubCreation;
 import org.project.subscriptionservice.dao.*;
 import org.project.subscriptionservice.domain.exception.SubException;
@@ -26,8 +28,6 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.project.subscriptionservice.context.PushEmailService.sendCancelMessage;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -39,6 +39,7 @@ public class SubServiceImpl implements SubService {
     private final InvoiceDao invoiceDao;
     private final PaymentDao paymentDao;
     private final SubMemberDao subMemberDao;
+    private final PushEmailService pushEmailService;
 
     @Override
     @MetaHandler
@@ -60,16 +61,16 @@ public class SubServiceImpl implements SubService {
 
     @Override
     @MetaHandler
+    @Transactional(readOnly = true)
     public SubscriptionEntity view(Integer id, MetaData metaData) {
-        try {
-            return subDao.view(id, metaData.getUsername());
-        } catch (HttpException e) {
+        SubscriptionEntity sub = subDao.view(id, metaData.getUsername());
+        if (sub == null) {
             throw SubException.notFound();
         }
+        return sub;
     }
 
     @Override
-    @SneakyThrows
     @Deprecated
     @MetaHandler
     @Transactional(rollbackFor = HttpException.class)
@@ -146,7 +147,7 @@ public class SubServiceImpl implements SubService {
             memberEntity.setSubscriptionId(save.getId());
             memberEntity.setUserId(userEntity.getId());
             memberEntity.setRoleConstant(SubRoleConstant.OWNER);
-            memberEntity.setAccepted(true);
+            memberEntity.setAccepted(Boolean.TRUE);
             memberEntity.setInvitedAt(LocalDateTime.now());
             subMemberDao.create(memberEntity);
 
@@ -177,17 +178,32 @@ public class SubServiceImpl implements SubService {
     }
 
     @Override
-    @MetaHandler
     @Transactional(rollbackFor = Exception.class)
+    @SneakyThrows
     public SubscriptionEntity cancel(Integer id, Integer userId, MetaData metaData) {
+        SubscriptionMemberEntity planMember = subMemberDao.findSubAndUser(id, userId);
+        if (planMember == null) {
+            throw SubPlanException.notFound();
+        }
+
         UserEntity user = userDao.view(userId);
         SubscriptionEntity subscribe = subDao.view(id);
 
-        if (user.getActive() == AccountStatus.ACTIVE && user.getLocked() == 0 && subscribe.getStatus() == SubscriptionStatus.ACTIVE) {
-            subscribe.setStatus(SubscriptionStatus.CANCELLED);
-            subDao.update(subscribe, id);
-//             implementation email to notify user
-            sendCancelMessage();
+        try {
+            if (user.getActive() == AccountStatus.ACTIVE
+                && user.getLocked() == 0
+                && subscribe.getStatus() == SubscriptionStatus.ACTIVE) {
+
+                subscribe.setStatus(SubscriptionStatus.CANCELLED);
+                subscribe.setAutoRenew(false);
+                subDao.update(subscribe, id);
+
+                planMember.setAccepted(false);
+                subMemberDao.update(planMember, planMember.getId());
+                pushEmailService.sendCancelMessage(user.getEmail(), "没钱 :)");
+            }
+        } catch (Exception e) {
+            throw new SubException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         return subscribe;
     }
@@ -195,35 +211,43 @@ public class SubServiceImpl implements SubService {
     @Override
     @MetaHandler
     @Transactional(rollbackFor = HttpException.class)
-    public void invite(Integer id, String[] emails, MetaData metaData) {
+    public void invite(String id, InviteUserRequest request, MetaData metaData) {
+        SubscriptionPlanEntity subPlan = subPlanDao.findRef(id);
+        if (subPlan == null) throw SubPlanException.notFound();
 
-        SubscriptionMemberEntity member = new SubscriptionMemberEntity();
-        SubscriptionEntity subscription = subDao.view(id);
+        SubscriptionEntity subscription = subDao.findPlan(subPlan.getId());
+        if (subscription == null) throw SubPlanException.notFound();
 
+        Integer subId = subscription.getId();
         LocalDateTime now = LocalDateTime.now();
-        if (subscription.getPlanEnd().isBefore(now)) {
-            throw SubException.checkDate();
+        String uuid = UUID.randomUUID().toString().substring(1, 5);
+
+        if (subPlan.getMaxParticipate() <= request.getEmails().size()) {
+            throw SubException.maxJoin();
         }
-        for (String email : emails) {
+
+        for (String email : request.getEmails()) {
             UserEntity user = userDao.getByEmail(email);
             if (user == null) {
                 throw UserException.notFound();
             } else {
-                boolean existEmailSub = subDao.checkEmail(id, user.getId(), now);
+                boolean existEmailSub = subDao.checkEmail(subId, user.getId(), now);
                 if (existEmailSub) {
                     throw SubException.existEmailSub();
                 }
-                if (subscription.getSubscriptionPlan().getMaxParticipate() >= emails.length) {
-                    member.setUserId(user.getId());
-                    member.setInvitedAt(LocalDateTime.now());
-                    member.setRoleConstant(SubRoleConstant.MEMBER);
-                    member.setSubscription(subscription);
-                    member.setAccepted(true);
-                    member.setSubscriptionId(id);
-                    subMemberDao.create(member);
-                } else {
-                    throw SubException.maxJoin();
-                }
+                SubscriptionMemberEntity member = new SubscriptionMemberEntity();
+                member.setUserId(user.getId());
+                member.setInvitedAt(LocalDateTime.now());
+                member.setRoleConstant(SubRoleConstant.MEMBER);
+                member.setSubscription(subscription);
+                member.setAccepted(true);
+                member.setSubscriptionId(subId);
+                subMemberDao.create(member);
+
+                UserEntity userInvite = userDao.getByUsername(metaData.getUsername());
+                user.setInviteBy(userInvite.getId());
+                user.setInviteCode(userInvite.getUsername() + "_" + uuid);
+                userDao.update(user, user.getId());
             }
         }
     }

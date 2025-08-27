@@ -30,7 +30,4 @@ public interface UserService {
 
     void delete(Integer id, MetaData metaData);
 
-    UserEntity invite(Integer id, Integer subscribeId);
-
-
 }

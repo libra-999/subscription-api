@@ -3,6 +3,7 @@ package org.project.subscriptionservice.controller;
 import lombok.RequiredArgsConstructor;
 import org.project.subscriptionservice.bean.SubscriptionEntity;
 import org.project.subscriptionservice.controller.mapper.SubControllerMapper;
+import org.project.subscriptionservice.controller.request.InviteUserRequest;
 import org.project.subscriptionservice.controller.request.SubCreation;
 import org.project.subscriptionservice.controller.response.SubDetailResponse;
 import org.project.subscriptionservice.controller.response.SubResponse;
@@ -24,6 +25,17 @@ public class SubController {
     private final SubControllerMapper mapper;
     private final SubService service;
 
+    /**
+     * List response entity.
+     *
+     * @param page      the page
+     * @param size      the size
+     * @param keyword   the keyword
+     * @param status    the status
+     * @param startDate the start date
+     * @param endDate   the end date
+     * @return the response entity
+     */
     @GetMapping
     public ResponseEntity<HttpBodyResponse<List<SubResponse>>> list(@RequestParam(required = false) Integer page,
                                                                     @RequestParam(required = false) Integer size,
@@ -44,24 +56,43 @@ public class SubController {
         );
     }
 
+    /**
+     * View response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @GetMapping("/{id}")
     public ResponseEntity<HttpBodyResponse<SubDetailResponse>> view(@PathVariable Integer id) {
         return responseSucceed(mapper.fromDetail(service.view(id, new MetaData())));
     }
 
+    /**
+     * Create response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping
     public ResponseEntity<HttpBodyResponse<SubDetailResponse>> create(@RequestBody @Validated SubCreation request) {
         return responseCreated(mapper.fromDetail(service.create(request, new MetaData())));
     }
 
-    @PatchMapping("cancel/{userId}/{subId}")
+    /**
+     * Cancel sub response entity.
+     *
+     * @param userId the user id
+     * @param subId  the sub id
+     * @return the response entity
+     */
+    @PatchMapping("/cancel/{userId}/{subId}")
     public ResponseEntity<HttpBodyResponse<SubResponse>> cancelSub(@PathVariable Integer userId, @PathVariable Integer subId) {
-        return responseSucceed(mapper.fromList(service.cancel(userId, subId, new MetaData())));
+        return responseSucceed(mapper.fromList(service.cancel(subId, userId, new MetaData())));
     }
 
-    @PostMapping("/invite-user/{subId}")
-    public ResponseEntity<HttpBodyResponse<?>> invite(@RequestBody String[] emails, @PathVariable Integer subId) {
-        service.invite(subId, emails, new MetaData());
+    @PostMapping("/invite-user/{planRef}")
+    public ResponseEntity<HttpBodyResponse<?>> invite(@RequestBody InviteUserRequest request, @PathVariable String planRef) {
+        service.invite(planRef, request, new MetaData());
         return responseSucceed();
     }
 

@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.*;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -61,11 +62,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @MetaHandler
     public UserEntity view(Integer id, MetaData metaData) {
-        try{
-            return userDao.view(id, metaData.getUsername());
-        }catch (HttpException e){
+        UserEntity user = userDao.view(id, metaData.getUsername());
+        if (user == null) {
             throw UserException.notFound();
         }
+        return user;
     }
 
     @Override
@@ -76,6 +77,7 @@ public class UserServiceImpl implements UserService {
         UserEntity user = new UserEntity();
         CheckExistFields(user, request);
         user.setLocked(0);
+        user.setBalance(BigDecimal.ZERO);
         user.setJob("Student");
         user.setPhone(request.getPhone());
         user.setCreatedAt(new Date());
@@ -96,6 +98,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(entity.getEmail());
         user.setActive(AccountStatus.ACTIVE);
         user.setLocked(0);
+        user.setBalance(BigDecimal.ZERO);
         user.setJob(entity.getJob());
         user.setPhone(entity.getPhone());
         user.setCreatedAt(new Date());
@@ -176,11 +179,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(Integer id, MetaData metaData) {
         userDao.forceDelete(id);
-    }
-
-    @Override
-    public UserEntity invite(Integer id, Integer subscribeId) {
-        return null;
     }
 
     private Map<String, String> MapUserFields(String token, UserDetail userDetail, Map<String, String> map) {

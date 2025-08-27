@@ -16,7 +16,8 @@ public class SubPlanDetailResponse {
     private String name;
     private String currency;
     private BigDecimal price;
+    private Integer maxSubscriptions;
     private String period;
-    private List<UserListResponse> users;
+    private List<UserSubResponse> users;
     private String description;
 }

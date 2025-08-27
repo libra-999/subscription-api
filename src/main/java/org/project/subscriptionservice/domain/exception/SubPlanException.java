@@ -16,4 +16,8 @@ public class SubPlanException extends HttpException {
     public static SubPlanException notFound() {
         return new SubPlanException(HttpStatus.NOT_FOUND, "Plan not found");
     }
+
+    public static SubPlanException notSub() {
+        return new SubPlanException(HttpStatus.NOT_FOUND, "User not in subscription");
+    }
 }

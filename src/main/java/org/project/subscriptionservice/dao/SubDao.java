@@ -20,4 +20,6 @@ public interface SubDao extends Dao<SubscriptionEntity> {
     SubscriptionEntity view(Integer id, String username);
 
     boolean checkEmail(Integer id, Integer userId , LocalDateTime time);
+
+    SubscriptionEntity findPlan(Integer id);
 }

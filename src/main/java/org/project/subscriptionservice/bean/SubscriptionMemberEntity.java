@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.project.subscriptionservice.bean.enums.SubRoleConstant;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -28,7 +27,7 @@ public class SubscriptionMemberEntity {
     @TableField("role_status")
     private SubRoleConstant roleConstant;
 
-    @TableField("accepted")
+    @TableField("accept")
     private boolean accepted;
 
     @TableField("invited_at")
@@ -38,5 +37,5 @@ public class SubscriptionMemberEntity {
     private SubscriptionEntity subscription;
 
     @TableField(exist = false)
-    private UserEntity user;
+    private UserEntity userEntity;
 }

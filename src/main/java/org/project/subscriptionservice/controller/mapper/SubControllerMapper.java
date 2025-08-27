@@ -4,7 +4,6 @@ package org.project.subscriptionservice.controller.mapper;
 import org.mapstruct.*;
 import org.project.subscriptionservice.bean.SubscriptionEntity;
 import org.project.subscriptionservice.bean.SubscriptionPlanEntity;
-import org.project.subscriptionservice.bean.UserEntity;
 import org.project.subscriptionservice.controller.response.*;
 
 @Mapper(
@@ -25,6 +24,5 @@ public interface SubControllerMapper {
     @Mapping(target = "period", source = "billingCycle")
     SubPlanResponse from(SubscriptionPlanEntity entity);
 
-    UserDetailResponse fromTo(UserEntity entity);
 
 }

@@ -37,19 +37,21 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SubscriptionPlanEntity view(Integer id, MetaData metaData) {
-        try {
-            return subPlanDao.findSubPlan(id);
-        } catch (HttpException e) {
+
+        SubscriptionPlanEntity subPlan = subPlanDao.findSubPlan(id);
+        if (subPlan == null) {
             throw UserException.notFound();
         }
+        return subPlan;
     }
 
     @Override
     @Transactional(rollbackFor = HttpException.class)
     public SubscriptionPlanEntity create(SubPlanCreation request, MetaData metaData) {
         SubscriptionPlanEntity entity = new SubscriptionPlanEntity();
-        String uuid = UUID.randomUUID().toString().substring(0, 10);
+        String uuid = UUID.randomUUID().toString().substring(0,5);
         String ref = "plan_" + uuid;
 
         if (subPlanDao.getAlreadyName(request.getName()) != null) {

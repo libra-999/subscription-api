@@ -9,41 +9,51 @@
         <result property="description" column="description"/>
         <result property="price" column="price"/>
         <result property="currency" column="currency"/>
+        <result property="maxParticipate" column="max_participate"/>
         <result property="billingCycle" column="billing_cycle"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <collection property="subscriptions" ofType="org.project.subscriptionservice.bean.SubscriptionEntity"
+                    select="findSubscriptionsByPlanId" column="id"
+        />
+    </resultMap>
+    <resultMap id="subscription" type="org.project.subscriptionservice.bean.SubscriptionEntity">
+        <id property="id" column="id"/>
+        <result property="planId" column="plan_id"/>
+        <result property="status" column="status"/>
+        <result property="planStart" column="plan_start"/>
+        <result property="planEnd" column="plan_end"/>
+        <result property="autoRenew" column="auto_renew"/>
+        <result property="isTrial" column="is_trial"/>
 
-        <collection property="subscriptions" ofType="org.project.subscriptionservice.bean.SubscriptionEntity">
-            <id property="id" column="id"/>
-            <result property="planId" column="plan_id"/>
-            <result property="status" column="status"/>
-            <result property="planStart" column="plan_start"/>
-            <result property="planEnd" column="plan_end"/>
-            <collection property="members" ofType="org.project.subscriptionservice.bean.SubscriptionMemberEntity">
-                <id property="id" column="id"/>
-                <result property="userId" column="user_id"/>
-                <result property="subscriptionId" column="subscription_id"/>
-                <association property="user" javaType="org.project.subscriptionservice.bean.UserEntity">
-                    <id property="id" column="id"/>
-                    <result property="username" column="us_username"/>
-                    <result property="email" column="us_email"/>
-                    <result property="phone" column="us_phone"/>
-                    <result property="job" column="us_job"/>
-                    <result property="locked" column="us_locked"/>
-                    <result property="active" column="us_active"/>
-                    <result property="inviteCode" column="us_invite_code"/>
-                    <result property="inviteBy" column="us_invite_by"/>
-                    <result property="createdBy" column="us_created_by"/>
-                    <result property="updatedBy" column="us_updated_by"/>
-                </association>
-            </collection>
-        </collection>
+        <collection property="members" ofType="org.project.subscriptionservice.bean.SubscriptionMemberEntity"
+                    select="findMembersBySubscriptionId" column="id"/>
+    </resultMap>
+    <resultMap id="member" type="org.project.subscriptionservice.bean.SubscriptionMemberEntity">
+        <id property="id" column="id"/>
+        <result property="subscriptionId" column="subscription_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="roleConstant" column="role_status"/>
+        <result property="accepted" column="accept"/>
+        <result property="invitedAt" column="invited_at"/>
+
+        <association property="userEntity" javaType="org.project.subscriptionservice.bean.UserEntity"
+                     select="findUserById" column="user_id"/>
     </resultMap>
 
     <select id="findSubPlan" resultMap="subscribe" parameterType="int">
-        select sp.*, sub.*, subm.*, us.*
-        from SUBPLANS sp
-                 left join SUBSCRIPTION sub on sub.PLAN_ID = sp.ID
-                 left join SUBSCRIPTION_MEMBER subm on subm.SUBSCRIPTION_ID = sub.ID
-                 left join USERS us on subm.USER_ID = us.ID
-        where sp.ID = #{id}
+        select * from SUBPLANS where id = #{id}
     </select>
+    <select id="findSubscriptionsByPlanId" resultMap="subscription" parameterType="int">
+        select * from SUBSCRIPTION where PLAN_ID = #{planId}
+    </select>
+    <select id="findMembersBySubscriptionId" resultMap="member" parameterType="int">
+        select * from SUBSCRIPTION_MEMBER where SUBSCRIPTION_ID = #{subscriptionId}
+    </select>
+    <select id="findUserById" resultType="org.project.subscriptionservice.bean.UserEntity" parameterType="int">
+        select * from USERS where id = #{id}
+    </select>
+
+
+
 </mapper>

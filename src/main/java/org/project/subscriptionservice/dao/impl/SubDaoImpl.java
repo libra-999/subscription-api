@@ -2,7 +2,9 @@ package org.project.subscriptionservice.dao.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.extern.slf4j.Slf4j;
 import org.project.subscriptionservice.bean.SubscriptionEntity;
+import org.project.subscriptionservice.bean.SubscriptionPlanEntity;
 import org.project.subscriptionservice.bean.enums.SubscriptionStatus;
 import org.project.subscriptionservice.dao.SubDao;
 import org.project.subscriptionservice.dao.mapper.SubDaoMapper;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Repository
+@Slf4j
 public class SubDaoImpl extends DaoImpl<SubscriptionEntity, SubDaoMapper> implements SubDao {
 
     @Override
@@ -38,6 +41,11 @@ public class SubDaoImpl extends DaoImpl<SubscriptionEntity, SubDaoMapper> implem
 
     @Override
     public boolean checkEmail(Integer id, Integer userId, LocalDateTime time) {
-        return false;
+        return baseMapper.checkEmailSub(id,userId, time);
+    }
+
+    @Override
+    public SubscriptionEntity findPlan(Integer id) {
+        return baseMapper.findByPlanId(id);
     }
 }

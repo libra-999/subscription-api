@@ -35,8 +35,21 @@ spring:
           max-wait: 4s
   security:
     user:
-      name: admin
-      password: admin888
+      name: ${USER_SECURE}
+      password: ${PASSWORD_SECURE}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${USER_MAIL}
+    password: ${PASSWORD_MAIL}
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 
 mybatis-plus:
   global-config:

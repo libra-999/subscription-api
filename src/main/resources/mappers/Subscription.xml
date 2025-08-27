@@ -8,6 +8,8 @@
         <result column="plan_id" property="planId" />
         <result column="status" property="status"/>
         <result column="plan_start" property="planStart" />
+        <result column="auto_renew" property="autoRenew"/>
+        <result column="is_trial" property="isTrial"/>
         <result column="plan_end" property="planEnd"/>
         <result column="created_at" property="createdAt"/>
         <result column="updated_at" property="updatedAt"/>
@@ -15,7 +17,6 @@
         <result column="created_by" property="createdBy"/>
         <result column="updated_by" property="updatedBy"/>
         <result column="deleted_by" property="deletedBy"/>
-
         <association property="subscriptionPlan" javaType="org.project.subscriptionservice.bean.SubscriptionPlanEntity">
             <id column="id" property="id"/>
             <result column="name" property="name" />
@@ -25,22 +26,37 @@
             <result column="currency" property="currency" />
             <result column="billing_cycle" property="billingCycle" />
         </association>
+
+        <collection property="members" ofType="org.project.subscriptionservice.bean.SubscriptionMemberEntity">
+            <id column="id" property="id"/>
+            <result column="subscription_id" property="subscriptionId"/>
+            <result column="user_id" property="userId"/>
+            <result column="role_status" property="roleConstant"/>
+            <result column="accept" property="accepted"/>
+            <result column="invited_at" property="invitedAt"/>
+            <association property="userEntity" javaType="org.project.subscriptionservice.bean.UserEntity">
+                <id column="id" property="id"/>
+                <result column="username" property="username"/>
+                <result column="email" property="email"/>
+                <result column="phone" property="phone"/>
+                <result column="job" property="job"/>
+                <result column="locked" property="locked"/>
+                <result column="active" property="active"/>
+            </association>
+        </collection>
     </resultMap>
 
     <select id="listAll" resultMap="subscription">
-        select sub.*, sp.* , u.*
+        select sub.*, sp.*, sm.*, us.*
         from SUBSCRIPTION sub
         left join SUBPLANS sp on sp.ID = sub.PLAN_ID
-        left join USERS u on u.ID = sub.USER_ID
-        where sub.DELETED_AT is null and u.ACTIVE = 'ACTIVE' and u.LOCKED = 0
-        and sub.CREATED_BY = #{username}
+        left join SUBSCRIPTION_MEMBER sm on sm.SUBSCRIPTION_ID  = sub.ID
+        left join USERS us on us.ID = sm.USER_ID
+        where sub.DELETED_AT is null and sub.CREATED_BY = #{username}
 
         <if test="keyword != null and keyword != ''">
             and (
-            lower(sp.NAME) like concat('%', #{keyword}, '%') or
-            lower(u.username) like concat ('%' , #{keyword}, '%') or
-            lower(u.email) like concat ('%', #{keyword}, '%') or
-            lower(u.job) like concat ('%', #{keyword}, '%')
+            lower(sp.NAME) like concat('%', #{keyword}, '%')
             )
         </if>
 
@@ -55,17 +71,31 @@
             and sub.CREATED_AT &lt;= #{endDate}
         </if>
 
-        order by u.ID DESC
+        order by sub.ID DESC
     </select>
 
     <select id="findById" resultMap="subscription">
 
-        select sub.*, sp.*
+        select sub.*, sp.* , sm.*, us.*
         from SUBSCRIPTION sub
-                 left join SUBPLANS sp on sp.ID = sub.PLAN_ID
+            left join SUBPLANS sp on sp.ID = sub.PLAN_ID
+            left join SUBSCRIPTION_MEMBER sm on sm.SUBSCRIPTION_ID = sub.ID
+            left join USERS us on us.ID = sm.USER_ID
         where sub.DELETED_AT is null
           and sub.CREATED_BY = #{username} and sub.ID = #{id}
-
-
+    </select>
+    <select id="findByPlanId" resultMap="subscription">
+        select sub.*, sp.* from SUBSCRIPTION sub
+        left join SUBPLANS sp on sub.PLAN_ID = sp.ID
+        where sub.DELETED_AT is null and sub.PLAN_ID = #{id}
+    </select>
+    <select id="checkEmailSub" resultType="java.lang.Boolean" parameterType="map">
+        select case when count(1) > 0 then 1 else 0 end
+        from SUBSCRIPTION sub
+                 left join SUBSCRIPTION_MEMBER sm on sm.SUBSCRIPTION_ID = sub.id
+        left join USERS us on us.ID = sm.USER_ID where
+        sub.ID = #{id} and
+        us.ID = #{userId} and
+        sub.PLAN_END > #{time}
     </select>
 </mapper>

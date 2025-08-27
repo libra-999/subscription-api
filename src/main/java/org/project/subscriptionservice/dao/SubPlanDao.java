@@ -12,4 +12,6 @@ public interface SubPlanDao extends Dao<SubscriptionPlanEntity> {
     SubscriptionPlanEntity getPlanRef(String ref);
 
     SubscriptionPlanEntity findSubPlan(Integer id);
+
+    SubscriptionPlanEntity findRef(String ref);
 }

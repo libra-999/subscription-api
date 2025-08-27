@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 public class SubDetailResponse {
 
     private SubPlanResponse plan;
-    private UserDetailResponse user;
     private Boolean autoRenew;
-    private Boolean isTrail;
+    private Boolean isTrial;
     private String status;
     private String planStart;
     private String planEnd;

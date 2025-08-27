@@ -9,6 +9,7 @@ create table USERS
     job         varchar2(50),
     locked      number(1),
     invite_code varchar2(50),
+    amount      number(11,4) not null ,
     invited_by  number,
     active      varchar2(20) default 'ACTIVE' check ( active in ('ACTIVE', 'SUSPENDED', 'DELETED') ),
     created_at  timestamp    default current_timestamp,
@@ -125,7 +126,6 @@ create index subplan_billing_cycle on SUBPLANS (billing_cycle);
 create index usr_username on USERS (username);
 create index payment_ref on PAYMENTS (reference);
 create index invoice_invoiceno on INVOICES (invoice_no);
-create index subscript_userid on SUBSCRIPTION (user_id);
 create index subscript_planid on SUBSCRIPTION (plan_id);
 create index invite_code_idx on USERS (invite_code);
 create index sub_member_role_status_idx on SUBSCRIPTION_MEMBER(role_status);

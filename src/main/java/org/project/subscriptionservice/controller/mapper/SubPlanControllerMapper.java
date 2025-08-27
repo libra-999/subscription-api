@@ -7,9 +7,8 @@ import org.project.subscriptionservice.bean.SubscriptionPlanEntity;
 import org.project.subscriptionservice.bean.UserEntity;
 import org.project.subscriptionservice.controller.response.SubPlanDetailResponse;
 import org.project.subscriptionservice.controller.response.SubPlanResponse;
-import org.project.subscriptionservice.controller.response.UserListResponse;
+import org.project.subscriptionservice.controller.response.UserSubResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,23 +23,27 @@ public interface SubPlanControllerMapper {
     SubPlanResponse fromList(SubscriptionPlanEntity entity);
 
     @Mapping(target = "period", source = "billingCycle")
+    @Mapping(target = "maxSubscriptions", source = "maxParticipate")
     @Mapping(target = "users", expression = "java(listUsers(entity.getSubscriptions()))")
     SubPlanDetailResponse fromDetail(SubscriptionPlanEntity entity);
 
-    @Mapping(target = "username", source = "username")
-    UserListResponse to(UserEntity user);
+    @Mapping(target = "id", source = "user.id")
+    @Mapping(target = "username", source = "user.username")
+    @Mapping(target = "email", source = "user.email")
+    @Mapping(target = "job", source = "user.job")
+    @Mapping(target = "active", source = "user.active")
+    @Mapping(target = "role", source = "member.roleConstant")
+    @Mapping(target = "subscribeStatus", source = "member.accepted")
+    UserSubResponse to(UserEntity user, SubscriptionMemberEntity member);
 
-    default List<UserListResponse> listUsers(List<SubscriptionEntity> entities) {
+    default List<UserSubResponse> listUsers(List<SubscriptionEntity> entities) {
         if (entities == null) {
-            return new ArrayList<>();
+            return List.of();
         }
         return entities.stream()
             .filter(Objects::nonNull)
-            .flatMap(sub -> sub.getMembers().stream())
-            .filter(Objects::nonNull)
-            .map(SubscriptionMemberEntity::getUser)
-            .filter(Objects::nonNull)
-            .map(this::to)
+            .flatMap(sub -> sub.getMembers().stream()
+                .map(member -> this.to(member.getUserEntity(), member)))
             .toList();
     }
 }
