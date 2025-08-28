@@ -15,12 +15,14 @@ public interface AuthControllerMapper {
 
     AuthResponse to(UserEntity user);
 
+    @Mapping(target = "balance", source = "balance")
     UserListResponse toList(UserEntity users);
 
     @Mapping(target = "phone", source = "phone")
     @Mapping(target = "createdBy", source = "createdBy")
     @Mapping(target = "updatedBy", source = "updatedBy")
     @Mapping(target = "locked", source = "locked")
+    @Mapping(target = "balance", source = "balance")
     UserDetailResponse toDetail(UserEntity users);
 
 }

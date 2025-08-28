@@ -19,5 +19,5 @@ public interface SubService {
 
     void invite(String id, InviteUserRequest request, MetaData metaData);
 
-    SubscriptionEntity checkRenew();
+    void checkRenew();
 }

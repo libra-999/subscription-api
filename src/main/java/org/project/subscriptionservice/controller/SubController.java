@@ -17,6 +17,10 @@ import java.util.List;
 
 import static org.project.subscriptionservice.share.controller.ControllerHandler.*;
 
+/**
+ * The type Sub controller.
+ * @ libra
+ */
 @RestController
 @RequestMapping("v1/api/subscribes")
 @RequiredArgsConstructor
@@ -90,6 +94,13 @@ public class SubController {
         return responseSucceed(mapper.fromList(service.cancel(subId, userId, new MetaData())));
     }
 
+    /**
+     * Invite response entity.
+     *
+     * @param request the request
+     * @param planRef the plan ref
+     * @return the response entity
+     */
     @PostMapping("/invite-user/{planRef}")
     public ResponseEntity<HttpBodyResponse<?>> invite(@RequestBody InviteUserRequest request, @PathVariable String planRef) {
         service.invite(planRef, request, new MetaData());

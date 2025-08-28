@@ -40,4 +40,12 @@ public class UserException extends HttpException {
     public static UserException invalidPhone(){
         return new UserException(HttpStatus.BAD_REQUEST, "Invalid phone");
     }
+
+    public static UserException outBalance(){
+        return new UserException(HttpStatus.BAD_REQUEST, "Out balance");
+    }
+
+    public static UserException efficientBalance(){
+        return new UserException(HttpStatus.FORBIDDEN, "Out balance");
+    }
 }

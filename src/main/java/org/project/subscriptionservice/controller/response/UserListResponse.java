@@ -10,4 +10,5 @@ public class UserListResponse {
     private String username;
     private String active;
     private String job;
+    private double balance;
 }

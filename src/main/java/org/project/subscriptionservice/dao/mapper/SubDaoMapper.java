@@ -9,6 +9,7 @@ import org.project.subscriptionservice.bean.enums.SubscriptionStatus;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 public interface SubDaoMapper extends BaseMapper<SubscriptionEntity> {
 
@@ -24,4 +25,6 @@ public interface SubDaoMapper extends BaseMapper<SubscriptionEntity> {
     SubscriptionEntity findByPlanId(Integer id);
 
     boolean checkEmailSub(Integer id, Integer userId, LocalDateTime time);
+
+    List<SubscriptionEntity> findSubscribeExpired(@Param("time") LocalDateTime time);
 }

@@ -3,6 +3,7 @@ package org.project.subscriptionservice.domain.service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.project.subscriptionservice.bean.UserEntity;
+import org.project.subscriptionservice.controller.request.DepositRequest;
 import org.project.subscriptionservice.controller.request.Login;
 import org.project.subscriptionservice.controller.request.Register;
 import org.project.subscriptionservice.controller.request.UserCreation;
@@ -29,5 +30,7 @@ public interface UserService {
     void imageCode(String uuid, HttpServletResponse response);
 
     void delete(Integer id, MetaData metaData);
+
+    UserEntity deposit(Integer id, DepositRequest request, MetaData metaData);
 
 }

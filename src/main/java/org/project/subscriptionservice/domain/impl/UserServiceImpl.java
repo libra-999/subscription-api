@@ -10,9 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.project.subscriptionservice.aop.MetaHandler;
 import org.project.subscriptionservice.bean.UserEntity;
 import org.project.subscriptionservice.bean.enums.AccountStatus;
+import org.project.subscriptionservice.bean.enums.CurrencyStatus;
+import org.project.subscriptionservice.bean.enums.PaymentMethodStatus;
 import org.project.subscriptionservice.config.jwt.Util;
 import org.project.subscriptionservice.config.security.UserDetail;
 import org.project.subscriptionservice.context.RedisKeyConstant;
+import org.project.subscriptionservice.controller.request.DepositRequest;
 import org.project.subscriptionservice.controller.request.Login;
 import org.project.subscriptionservice.controller.request.Register;
 import org.project.subscriptionservice.controller.request.UserCreation;
@@ -177,8 +180,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @MetaHandler
     public void delete(Integer id, MetaData metaData) {
         userDao.forceDelete(id);
+    }
+
+    @Override
+    @MetaHandler
+    public UserEntity deposit(Integer id, DepositRequest request, MetaData metaData) {
+
+        UserEntity user = userDao.view(id);
+        if (user == null) {
+            throw UserException.notFound();
+        } else {
+            if (currencyCheck(request.getCurrency()) && methodCheck(request.getPaymentMethod())) {
+                BigDecimal oldBl = user.getBalance();
+                double newBl = request.getAmount() + oldBl.doubleValue();
+                user.setBalance(BigDecimal.valueOf(newBl));
+                user.setUpdatedAt(new Date());
+                user.setUpdatedBy(metaData.getUsername());
+                userDao.update(user, id);
+            } else {
+                throw new UserException(HttpStatus.BAD_REQUEST, "Error Deposit Money");
+            }
+        }
+        return user;
     }
 
     private Map<String, String> MapUserFields(String token, UserDetail userDetail, Map<String, String> map) {
@@ -204,5 +230,21 @@ public class UserServiceImpl implements UserService {
         entity.setEmail(request.getEmail());
         entity.setActive(AccountStatus.ACTIVE);
         entity.setLocked(0);
+    }
+
+    private boolean currencyCheck(String currency) {
+        for (CurrencyStatus currencyStatus : CurrencyStatus.values()) {
+            if (currencyStatus.name().equalsIgnoreCase(currency))
+                return true;
+        }
+        throw new UserException(HttpStatus.BAD_REQUEST, "Invalid Currency");
+    }
+
+    private boolean methodCheck(String paymentMethod) {
+        for (PaymentMethodStatus paymentMethodStatus : PaymentMethodStatus.values()) {
+            if (paymentMethodStatus.name().equalsIgnoreCase(paymentMethod))
+                return true;
+        }
+        throw new UserException(HttpStatus.BAD_REQUEST, "Invalid PaymentMethod");
     }
 }

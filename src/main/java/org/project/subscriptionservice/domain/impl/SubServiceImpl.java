@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.project.subscriptionservice.aop.MetaHandler;
+import org.project.subscriptionservice.aop.PaymentHandler;
 import org.project.subscriptionservice.bean.*;
 import org.project.subscriptionservice.bean.enums.*;
 import org.project.subscriptionservice.context.PushEmailService;
@@ -13,6 +14,7 @@ import org.project.subscriptionservice.dao.*;
 import org.project.subscriptionservice.domain.exception.SubException;
 import org.project.subscriptionservice.domain.exception.SubPlanException;
 import org.project.subscriptionservice.domain.exception.UserException;
+import org.project.subscriptionservice.domain.service.InvoiceService;
 import org.project.subscriptionservice.domain.service.SubService;
 import org.project.subscriptionservice.share.entity.MetaData;
 import org.project.subscriptionservice.share.entity.PaginationQuery;
@@ -22,9 +24,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -40,6 +44,7 @@ public class SubServiceImpl implements SubService {
     private final PaymentDao paymentDao;
     private final SubMemberDao subMemberDao;
     private final PushEmailService pushEmailService;
+    private final InvoiceService invoiceService;
 
     @Override
     @MetaHandler
@@ -73,6 +78,7 @@ public class SubServiceImpl implements SubService {
     @Override
     @Deprecated
     @MetaHandler
+    @PaymentHandler
     @Transactional(rollbackFor = HttpException.class)
     public SubscriptionEntity create(SubCreation request, MetaData metaData) {
         UserEntity userEntity = userDao.getByUsername(request.getUser().getUsername());
@@ -97,30 +103,7 @@ public class SubServiceImpl implements SubService {
 
             subscriptionEntity.setPlanId(subPlanEntity.getId());
             subscriptionEntity.setSubscriptionPlan(subPlanEntity);
-            switch (subPlanEntity.getBillingCycle()) {
-                case YEAR: {
-                    subscriptionEntity.setPlanStart(LocalDateTime.now());
-                    subscriptionEntity.setPlanEnd(LocalDateTime.now().plusYears(1));
-                    break;
-                }
-                case MONTHLY: {
-                    subscriptionEntity.setPlanStart(LocalDateTime.now());
-                    subscriptionEntity.setPlanEnd(LocalDateTime.now().plusMonths(1));
-                    break;
-                }
-                case WEEKLY: {
-                    subscriptionEntity.setPlanStart(LocalDateTime.now());
-                    subscriptionEntity.setPlanEnd(LocalDateTime.now().plusWeeks(1));
-                    break;
-                }
-                case DAY: {
-                    subscriptionEntity.setPlanStart(LocalDateTime.now());
-                    subscriptionEntity.setPlanEnd(LocalDateTime.now().plusDays(1));
-                    break;
-                }
-                default:
-                    break;
-            }
+            CycleBilling(subscriptionEntity, subPlanEntity);
 
             subscriptionEntity.setIsTrial(true);
             subscriptionEntity.setAutoRenew(request.getAutoRenew());
@@ -200,7 +183,7 @@ public class SubServiceImpl implements SubService {
 
                 planMember.setAccepted(false);
                 subMemberDao.update(planMember, planMember.getId());
-                pushEmailService.sendCancelMessage(user.getEmail(), "没钱 :)");
+                pushEmailService.sendMessage(user.getEmail(), "没钱 :)", "Subscription");
             }
         } catch (Exception e) {
             throw new SubException(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -253,8 +236,65 @@ public class SubServiceImpl implements SubService {
     }
 
     @Override
-    public SubscriptionEntity checkRenew() {
-        return null;
+    @Transactional(rollbackFor = HttpException.class)
+    public void checkRenew() {
+        List<SubscriptionEntity> subscriptionEntityList = subDao.listAllUserWithExpired(LocalDateTime.now());
+        for (SubscriptionEntity entity : subscriptionEntityList) {
+            if (entity.getAutoRenew()){
+
+                SubscriptionPlanEntity subPlan = subPlanDao.findSubPlan(entity.getPlanId());
+                if (subPlan == null) throw SubPlanException.notFound();
+
+                BigDecimal price = subPlan.getPrice();
+                SubscriptionMemberEntity memberEntity = subMemberDao.findOwnerSub(entity.getId());
+
+                Integer ownerId = memberEntity.getUserId();
+                UserEntity owner = userDao.view(ownerId, memberEntity.getUserEntity().getUsername());
+                if(owner == null) throw UserException.notFound();
+
+                BigDecimal balanceOwner =  owner.getBalance();
+
+                if (balanceOwner.compareTo(price) >= 0){
+                    owner.setBalance(balanceOwner.subtract(price));
+                    userDao.update(owner, owner.getId());
+
+                    entity.setStatus(SubscriptionStatus.ACTIVE);
+                    CycleBilling(entity, subPlan);
+
+                    subDao.update(entity, entity.getId());
+                    invoiceService.create(ownerId, entity.getId(), subPlan);
+                }else {
+                    throw UserException.outBalance();
+                }
+            }
+        }
+    }
+
+    private void CycleBilling(SubscriptionEntity entity, SubscriptionPlanEntity subPlan) {
+        switch (subPlan.getBillingCycle()) {
+            case YEAR: {
+                entity.setPlanStart(LocalDateTime.now());
+                entity.setPlanEnd(LocalDateTime.now().plusYears(1));
+                break;
+            }
+            case MONTHLY: {
+                entity.setPlanStart(LocalDateTime.now());
+                entity.setPlanEnd(LocalDateTime.now().plusMonths(1));
+                break;
+            }
+            case WEEKLY: {
+                entity.setPlanStart(LocalDateTime.now());
+                entity.setPlanEnd(LocalDateTime.now().plusWeeks(1));
+                break;
+            }
+            case DAY: {
+                entity.setPlanStart(LocalDateTime.now());
+                entity.setPlanEnd(LocalDateTime.now().plusDays(1));
+                break;
+            }
+            default:
+                break;
+        }
     }
 
     @SneakyThrows
@@ -264,13 +304,12 @@ public class SubServiceImpl implements SubService {
     }
 
     @Deprecated
-    private String generateInvoiceNumber(Integer id) {
-        Date date = new Date();
+    public static String generateInvoiceNumber(Integer id) {
         String uuid = UUID.randomUUID().toString().substring(1, 4);
-        return date + "-" + uuid + "-" + id;
+        return "IN" + uuid + "-" + id;
     }
 
-    private String generateRefer(Integer id) {
+    public static String generateRefer(Integer id) {
         String uuid = UUID.randomUUID().toString().substring(1, 8);
         return String.format("SUB%s%08d", uuid, id);
     }

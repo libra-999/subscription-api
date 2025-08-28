@@ -6,6 +6,7 @@ import org.project.subscriptionservice.share.entity.Paging;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 public interface SubDao extends Dao<SubscriptionEntity> {
 
@@ -22,4 +23,6 @@ public interface SubDao extends Dao<SubscriptionEntity> {
     boolean checkEmail(Integer id, Integer userId , LocalDateTime time);
 
     SubscriptionEntity findPlan(Integer id);
+
+    List<SubscriptionEntity> listAllUserWithExpired(LocalDateTime time);
 }

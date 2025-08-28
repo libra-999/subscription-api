@@ -22,6 +22,7 @@ spring:
     private-key: classpath:cert/private.pem
     public-key: classpath:cert/public.pem
   data:
+#    kafka_servers: ${KAFKA_SERVERS:localhost:20001,localhost:20002,localhost:20003}
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}

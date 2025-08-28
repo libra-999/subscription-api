@@ -98,4 +98,12 @@
         us.ID = #{userId} and
         sub.PLAN_END > #{time}
     </select>
+
+    <select id="findSubscribeExpired" resultMap="subscription">
+        select sub.*, us.* from SUBSCRIPTION sub
+                          left join SUBSCRIPTION_MEMBER sm on sm.SUBSCRIPTION_ID = sub.ID
+                        left join USERS us on sm.USER_ID = us.ID
+        where sub.STATUS = 'ACTIVE' and sub.AUTO_RENEW = true
+        and  #{time} > sub.PLAN_END and sub.DELETED_AT is null
+    </select>
 </mapper>

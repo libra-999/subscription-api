@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -15,26 +16,22 @@ import org.springframework.stereotype.Service;
 public class PushEmailService {
 
     private final JavaMailSender mailSender;
+
     @Value("${spring.mail.username}")
     private String ownEmail;
 
     @SneakyThrows
-    public void sendCancelMessage (String email, String reason){
+    @Async
+    public void sendMessage(String email, String body, String subject) {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
         helper.setTo(email);
-        helper.setSubject("Your subscription has been cancelled , if you want to renew your subscription please contact us! ");
+        helper.setSubject(body);
         helper.setFrom(ownEmail);
-        helper.setText("<p> " + reason +" </p>\n", true);
+        helper.setText(subject, true);
 
         mailSender.send(message);
-    }
-
-    public void sendSubscribeMessage (String email, String message){
-    }
-
-    public void sendInvoiceMessage (){
     }
 
 }
