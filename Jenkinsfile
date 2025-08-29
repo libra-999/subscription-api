@@ -55,8 +55,8 @@ pipeline{
             steps{
                 echo "echo Building Docker Image with version: ${env.VERSION}"
                 withCredentials([string(credentialsId: 'DOCKER_HUB_CREDENTIAL', variable: 'DOCKER_PASSWORD')]) {
-                    sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_HUB_USER} --password-stdin"
-                    sh "docker build -t ${IMAGE_NAME}:${env.VERSION} ."
+                    sh "echo $DOCKER_PASSWORD | docker login -u ${DOCKER_HUB_USER} --password-stdin"
+                    sh "docker build -t ${IMAGE_NAME}:${env.VERSION} -f Dockerfile ."
                     sh "docker push ${IMAGE_NAME}:${env.VERSION}"
                     echo "Push Successfully"
                 }
