@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.project.subscriptionservice.config.jwt.Util;
 import org.project.subscriptionservice.share.entity.MetaData;
 import org.project.subscriptionservice.share.globalException.HttpException;
+import org.springframework.core.NamedThreadLocal;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -24,13 +25,14 @@ public class MetaHandlerAspect {
 
     private final Util util;
     private final HttpServletRequest request;
+    private static final ThreadLocal<Long> TIME_THREAD = new NamedThreadLocal<>("Cost Time");
 
     @Pointcut(value = "@annotation(org.project.subscriptionservice.aop.MetaHandler)")
     public void handle() {
     }
 
     @SneakyThrows
-    @Before(value = "handle() && args(.., metaData) , throwing = e")
+    @Before(value = "handle() && args(.., metaData)") // we call annotation in method annotation if we have argument in annotation
     public void action(JoinPoint joinPoint, MetaData metaData) {
 
         String token = request.getHeader("Authorization");
@@ -42,5 +44,11 @@ public class MetaHandlerAspect {
         } else {
             throw new HttpException(HttpStatus.UNAUTHORIZED,"X-User-ID is invalid");
         }
+    }
+
+    @Before(value = "@annotation(metaHandler)")
+    public void doThread(JoinPoint point, MetaHandler metaHandler) {
+        TIME_THREAD.set(System.currentTimeMillis());
+        log.info("::: Thread Local started: {}", TIME_THREAD.get());
     }
 }
