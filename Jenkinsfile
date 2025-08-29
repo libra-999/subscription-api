@@ -63,10 +63,9 @@ pipeline{
                 }
             }
             steps{
-
                 echo "Building Docker Image with version: ${env.VERSION}"
-                sh "docker build -t ${IMAGE_NAME}:${env.VERSION} ."
                 sh "echo ${DOCKER_HUB_CREDENTIALS}| docker login -u ${DOCKER_HUB_ID} --password-stdin"
+                sh "docker build -t ${IMAGE_NAME}:${env.VERSION} ."
                 sh "docker push ${IMAGE_NAME}:${env.VERSION}"
             }
         }
