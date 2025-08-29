@@ -6,10 +6,10 @@ pipeline{
         jdk "jdk-21"
     }
     environment{
-        DOCKER_HUB_CREDENTIALS = credentials("DOCKER_HUB_CREDENTIAL")
+        DOCKER_HUB_CREDENTIAL = credentials("DOCKER_HUB_CREDENTIAL")
         TELEGRAM_BOT_TOKEN = credentials("TELEGRAM_TOKEN")
         TELEGRAM_CHAT_ID = credentials("CHAT_ID")
-        DOCKER_HUB_ID = "xemon99"
+        DOCKER_HUB_USER = "xemon99"
         IMAGE_NAME = "xemon99/subscribe-auto"
         APP = "Subscribe Automation System"
         BRANCH_NAME = "main"
@@ -53,7 +53,7 @@ pipeline{
             steps{
                 sh """
                     echo Building Docker Image with version: ${env.VERSION}
-                    echo "$DOCKER_HUB_CREDENTIALS" | docker login -u "$DOCKER_HUB_ID" --password-stdin
+                    echo "${env.DOCKER_HUB_CREDENTIAL}" | docker login -u "${env.DOCKER_HUB_USER}" --password-stdin
                     docker build -t ${IMAGE_NAME}:${env.VERSION} .
                     docker push ${IMAGE_NAME}:${env.VERSION}
                     echo Push Successfully
