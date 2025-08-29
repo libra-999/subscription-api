@@ -41,7 +41,6 @@ pipeline{
             }
             steps{
                 echo "Building the artifact"
-                sh "mvn clean package"
                 sh "mvn clean package -DskipTests"
             }
         }
@@ -67,7 +66,7 @@ pipeline{
 
                 echo "Building Docker Image with version: ${env.VERSION}"
                 sh "docker build -t ${IMAGE_NAME}:${env.VERSION} ."
-                sh "echo $DOCKER_HUB_CREDENTIALS | docker login -u $DOCKER_HUB_ID --password-stdin"
+                sh "echo ${DOCKER_HUB_CREDENTIALS}| docker login -u ${DOCKER_HUB_ID} --password-stdin"
                 sh "docker push ${IMAGE_NAME}:${env.VERSION}"
             }
         }
@@ -76,7 +75,7 @@ pipeline{
         success {
             script{
                 def msg = """✅ *Deployed Successfully!* 🚀
-                                                *Image:* ${DOCKERHUB_IMAGE}:${env.VERSION}
+                                                *Image:* ${IMAGE_NAME}:${env.VERSION}
                                                 *Project:* ${APP}
                                                 """
 
