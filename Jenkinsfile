@@ -32,19 +32,40 @@ pipeline{
             }
         }
 
-        stage("Build Artifact") {
+        stage("Make Artifact") {
             when {
                 expression {
                     return TagBuild()
                 }
             }
             steps{
-                sh('echo $PATH')
-                sh('which docker || echo "docker not found in PATH"')
-                sh "docker --version"
                 echo "Building the artifact"
-                sh "mvn clean package -DskipTests"
+                sh 'mkdir -p artifacts'
+                sh 'cd artifacts && touch test.jar'
             }
+        }
+
+        stage("Build Jar") {
+              when {
+                  expression {
+                      return TagBuild()
+                  }
+              }
+              steps{
+                    script {
+                          sh 'chmod +x ./mvnw'
+                          sh './mvnw clean package -DskipTests'
+                          sh '''
+                              JAR_FILE=$(ls target/*.jar | head -n 1)
+                              if [ ! -f "$JAR_FILE" ]; then
+                                echo "❌ No JAR file found in target/"
+                                exit 1
+                              fi
+                              cp "$JAR_FILE" artifacts/SubscriptionService.jar
+                          '''
+                    }
+
+              }
         }
         stage("Build Docker Image && Push to Docker Hub") {
             when {
