@@ -6,7 +6,7 @@ pipeline{
         jdk "jdk-21"
     }
     environment{
-        DOCKER_HUB_CREDENTIAL = credentials("DOCKER_HUB_CREDENTIAL")
+//         DOCKER_HUB_CREDENTIAL = credentials("DOCKER_HUB_CREDENTIAL")
         TELEGRAM_BOT_TOKEN = credentials("TELEGRAM_TOKEN")
         TELEGRAM_CHAT_ID = credentials("CHAT_ID")
         DOCKER_HUB_USER = "xemon99"
@@ -53,9 +53,9 @@ pipeline{
             steps{
                 echo "echo Building Docker Image with version: ${env.VERSION}"
                 withCredentials([string(credentialsId: 'DOCKER_HUB_CREDENTIAL', variable: 'DOCKER_PASSWORD')]) {
-                    sh("echo $DOCKER_PASSWORD | docker login -u ${DOCKER_HUB_USER} --password-stdin")
-                    sh("docker build -t ${IMAGE_NAME}:${env.VERSION} .")
-                    sh("docker push ${IMAGE_NAME}:${env.VERSION}")
+                    sh "echo $DOCKER_PASSWORD | docker login -u ${DOCKER_HUB_USER} --password-stdin"
+                    sh "docker build -t ${IMAGE_NAME}:${env.VERSION} ."
+                    sh "docker push ${IMAGE_NAME}:${env.VERSION}"
                     echo "Push Successfully"
                 }
             }
