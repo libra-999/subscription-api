@@ -17,23 +17,7 @@ pipeline{
 
     stages{
         def version = sh(script: "git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD", returnStdout: true).trim()
-        def TagBuild(){
-            echo "Tagging the build"
-            def version = sh(script: "git describe --tags --exact-match 2>/dev/null || echo ''", returnStdout: true).trim()
-            return version != ''
-        }
-        def notify(){
-            echo "Build is completed"
-        }
-        def sendMessage(message){
-            sh """
-                curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \\
-                -d chat_id="${TELEGRAM_CHAT_ID}" \\
-                -d text="${message}" \\
-                -d parse_mode=Markdown
-            """
 
-        }
 
         stage("Checkout Code") {
             steps{
@@ -41,6 +25,16 @@ pipeline{
                 checkout scm
             }
         }
+
+        stage("Determine Version") {
+            steps {
+                script {
+                    env.VERSION = sh(script: "git describe --tags --exact-match 2>/dev/null || echo ''", returnStdout: true).trim()
+                    echo "VERSION=${env.VERSION}"
+                }
+            }
+        }
+
         stage("Build Artifact") {
             when {
                 expression {
@@ -73,10 +67,10 @@ pipeline{
             }
             steps{
 
-                echo "Building Docker Image with version: ${version}"
-                sh "docker build -t ${IMAGE_NAME}:${version} ."
+                echo "Building Docker Image with version: ${env.VERSION}"
+                sh "docker build -t ${IMAGE_NAME}:${env.VERSION} ."
                 sh "echo $DOCKER_HUB_CREDENTIALS | docker login -u $DOCKER_HUB_ID --password-stdin"
-                sh "docker push ${IMAGE_NAME}:${version}"
+                sh "docker push ${IMAGE_NAME}:${env.VERSION}"
             }
         }
     }
@@ -86,7 +80,7 @@ pipeline{
         }
         success {
              def msg = """✅ *Deployed Successfully!* 🚀
-                                *Image:* ${DOCKERHUB_IMAGE}:${version}
+                                *Image:* ${DOCKERHUB_IMAGE}:${env.VERSION}
                                 *Project:* ${APP}
                                 """
 
@@ -101,3 +95,21 @@ pipeline{
     }
 
 }
+def TagBuild(){
+    echo "Tagging the build"
+    def version = sh(script: "git describe --tags --exact-match 2>/dev/null || echo ''", returnStdout: true).trim()
+    return version != ''
+}
+def notify(){
+    echo "Build is completed"
+}
+def sendMessage(message){
+    sh """
+        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \\
+        -d chat_id="${TELEGRAM_CHAT_ID}" \\
+        -d text="${message}" \\
+        -d parse_mode=Markdown
+    """
+
+}
+
