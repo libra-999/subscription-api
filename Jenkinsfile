@@ -73,11 +73,6 @@ pipeline{
         }
     }
     post{
-        always{
-            script {
-                notify()
-            }
-        }
         success {
             script{
                 def msg = """✅ *Deployed Successfully!* 🚀
@@ -105,9 +100,6 @@ def TagBuild(){
     echo "Tagging the build"
     def version = sh(script: "git describe --tags --exact-match 2>/dev/null || echo ''", returnStdout: true).trim()
     return version != ''
-}
-def notify(){
-    echo "Build is completed"
 }
 def sendMessage(message){
     sh """
