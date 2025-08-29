@@ -44,18 +44,6 @@ pipeline{
                 sh "mvn clean package -DskipTests"
             }
         }
-//         stage("Test Unit") {
-//             when {
-//                 expression {
-//                     return TagBuild()
-//                 }
-//             }
-//             steps{
-//                 echo "Running Unit Tests"
-//                 sh "mvn test"
-//             }
-//
-//         }
         stage("Build Docker Image && Push to Docker Hub") {
             when {
                 expression {
@@ -63,10 +51,13 @@ pipeline{
                 }
             }
             steps{
-                echo "Building Docker Image with version: ${env.VERSION}"
-                sh "echo ${DOCKER_HUB_CREDENTIALS}| docker login -u ${DOCKER_HUB_ID} --password-stdin"
-                sh "docker build -t ${IMAGE_NAME}:${env.VERSION} ."
-                sh "docker push ${IMAGE_NAME}:${env.VERSION}"
+                sh """
+                    echo Building Docker Image with version: ${env.VERSION}
+                    echo "$DOCKER_HUB_CREDENTIALS" | docker login -u "$DOCKER_HUB_ID" --password-stdin
+                    docker build -t ${IMAGE_NAME}:${env.VERSION} .
+                    docker push ${IMAGE_NAME}:${env.VERSION}
+                    echo Push Successfully
+                """
             }
         }
     }
