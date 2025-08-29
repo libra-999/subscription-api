@@ -51,13 +51,13 @@ pipeline{
                 }
             }
             steps{
-                sh """
-                    echo Building Docker Image with version: ${env.VERSION}
-                    echo "${env.DOCKER_HUB_CREDENTIAL}" | docker login -u "${env.DOCKER_HUB_USER}" --password-stdin
-                    docker build -t ${IMAGE_NAME}:${env.VERSION} .
-                    docker push ${IMAGE_NAME}:${env.VERSION}
-                    echo Push Successfully
-                """
+                echo "echo Building Docker Image with version: ${env.VERSION}"
+                withCredentials([string(credentialsId: 'DOCKER_HUB_CREDENTIAL', variable: 'DOCKER_PASSWORD')]) {
+                    sh("echo $DOCKER_PASSWORD | docker login -u ${DOCKER_HUB_USER} --password-stdin")
+                    sh("docker build -t ${IMAGE_NAME}:${env.VERSION} .")
+                    sh("docker push ${IMAGE_NAME}:${env.VERSION}")
+                    echo "Push Successfully"
+                }
             }
         }
     }
