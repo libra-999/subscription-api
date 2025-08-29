@@ -6,7 +6,6 @@ pipeline{
         jdk "jdk-21"
     }
     environment{
-//         DOCKER_HUB_CREDENTIAL = credentials("DOCKER_HUB_CREDENTIAL")
         TELEGRAM_BOT_TOKEN = credentials("TELEGRAM_TOKEN")
         TELEGRAM_CHAT_ID = credentials("CHAT_ID")
         DOCKER_HUB_USER = "xemon99"
@@ -40,6 +39,9 @@ pipeline{
                 }
             }
             steps{
+                sh('echo $PATH')
+                sh('which docker || echo "docker not found in PATH"')
+                sh "docker --version"
                 echo "Building the artifact"
                 sh "mvn clean package -DskipTests"
             }
