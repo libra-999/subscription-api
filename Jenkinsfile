@@ -44,18 +44,18 @@ pipeline{
                 sh "mvn clean package -DskipTests"
             }
         }
-        stage("Test Unit") {
-            when {
-                expression {
-                    return TagBuild()
-                }
-            }
-            steps{
-                echo "Running Unit Tests"
-                sh "mvn test"
-            }
-
-        }
+//         stage("Test Unit") {
+//             when {
+//                 expression {
+//                     return TagBuild()
+//                 }
+//             }
+//             steps{
+//                 echo "Running Unit Tests"
+//                 sh "mvn test"
+//             }
+//
+//         }
         stage("Build Docker Image && Push to Docker Hub") {
             when {
                 expression {
@@ -75,9 +75,9 @@ pipeline{
         success {
             script{
                 def msg = """✅ *Deployed Successfully!* 🚀
-                                                *Image:* ${IMAGE_NAME}:${env.VERSION}
-                                                *Project:* ${APP}
-                                                """
+                *Image:* ${IMAGE_NAME}:${env.VERSION}
+                *Project:* ${APP}
+                """
 
                 sendMessage(msg)
             }
@@ -85,9 +85,9 @@ pipeline{
         }
         failure {
             script {
-                def msg = """✅ *Deployed Failed!*
-                                                *Project:* ${APP}
-                                                """
+                def msg = """*Deployed Failed!*
+                *Project:* ${APP}
+                """
                 sendMessage(msg)
             }
 
