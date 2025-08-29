@@ -87,20 +87,14 @@ pipeline{
     post{
         success {
             script{
-                def msg = """✅ *Deployed Successfully!* 🚀
-                *Image:* ${IMAGE_NAME}:${env.VERSION}
-                *Project:* ${APP}
-                """
-
+                def msg = """✅ *Deployed Successfully!* 🚀\n*Image:* ${IMAGE_NAME}:${env.VERSION} \n *Project:* ${APP}"""
                 sendMessage(msg)
             }
 
         }
         failure {
             script {
-                def msg = """*Deployed Failed!*
-                *Project:* ${APP}
-                """
+                def msg = """*Deployed Failed!* \n*Project:* ${APP} """
                 sendMessage(msg)
             }
 
