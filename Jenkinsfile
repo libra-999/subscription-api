@@ -7,14 +7,97 @@ pipeline{
     }
     environment{
         DOCKER_HUB_CREDENTIALS = credentials("DOCKER_HUB_CREDENTIAL")
+        TELEGRAM_BOT_TOKEN = credentials("TELEGRAM_TOKEN")
+        TELEGRAM_CHAT_ID = credentials("CHAT_ID")
         DOCKER_HUB_ID = "xemon99"
         IMAGE_NAME = "xemon99/subscribe-auto"
+        APP = "Subscribe Automation System"
+        BRANCH_NAME = "main"
     }
 
     stages{
-        stage("Build") {}
-        stage("Test Unit") {}
-        stage("Environment Setup") {}
-        stage("Build Docker Image && Push to Docker Hub") {}
+        def version = sh(script: "git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD", returnStdout: true).trim()
+        def TagBuild(){
+            echo "Tagging the build"
+            def version = sh(script: "git describe --tags --exact-match 2>/dev/null || echo ''", returnStdout: true).trim()
+            return version != ''
+        }
+        def notify(){
+            echo "Build is completed"
+        }
+        def sendMessage(message){
+            sh """
+                curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \\
+                -d chat_id="${TELEGRAM_CHAT_ID}" \\
+                -d text="${message}" \\
+                -d parse_mode=Markdown
+            """
+
+        }
+
+        stage("Checkout Code") {
+            steps{
+                echo "Checking out code from ${BRANCH_NAME} branch"
+                checkout scm
+            }
+        }
+        stage("Build Artifact") {
+            when {
+                expression {
+                    return TagBuild()
+                }
+            }
+            steps{
+                echo "Building the artifact"
+                sh "mvn clean package"
+                sh "mvn clean package -DskipTests"
+            }
+        }
+        stage("Test Unit") {
+            when {
+                expression {
+                    return TagBuild()
+                }
+            }
+            steps{
+                echo "Running Unit Tests"
+                sh "mvn test"
+            }
+
+        }
+        stage("Build Docker Image && Push to Docker Hub") {
+            when {
+                expression {
+                    return TagBuild()
+                }
+            }
+            steps{
+
+                echo "Building Docker Image with version: ${version}"
+                sh "docker build -t ${IMAGE_NAME}:${version} ."
+                sh "echo $DOCKER_HUB_CREDENTIALS | docker login -u $DOCKER_HUB_ID --password-stdin"
+                sh "docker push ${IMAGE_NAME}:${version}"
+            }
+        }
     }
+    post{
+        always{
+            notify()
+        }
+        success {
+             def msg = """✅ *Deployed Successfully!* 🚀
+                                *Image:* ${DOCKERHUB_IMAGE}:${version}
+                                *Project:* ${APP}
+                                """
+
+            sendMessage(msg)
+        }
+        failure {
+             def msg = """✅ *Deployed Failed!*
+                                *Project:* ${APP}
+                                """
+            sendMessage(msg)
+        }
+    }
+
 }
