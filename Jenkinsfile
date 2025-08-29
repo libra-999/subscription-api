@@ -76,21 +76,29 @@ pipeline{
     }
     post{
         always{
-            notify()
+            script {
+                notify()
+            }
         }
         success {
-             def msg = """✅ *Deployed Successfully!* 🚀
-                                *Image:* ${DOCKERHUB_IMAGE}:${env.VERSION}
-                                *Project:* ${APP}
-                                """
+            script{
+                def msg = """✅ *Deployed Successfully!* 🚀
+                                                *Image:* ${DOCKERHUB_IMAGE}:${env.VERSION}
+                                                *Project:* ${APP}
+                                                """
 
-            sendMessage(msg)
+                sendMessage(msg)
+            }
+
         }
         failure {
-             def msg = """✅ *Deployed Failed!*
-                                *Project:* ${APP}
-                                """
-            sendMessage(msg)
+            script {
+                def msg = """✅ *Deployed Failed!*
+                                                *Project:* ${APP}
+                                                """
+                sendMessage(msg)
+            }
+
         }
     }
 
