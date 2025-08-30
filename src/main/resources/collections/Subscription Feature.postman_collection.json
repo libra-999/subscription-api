@@ -1,0 +1,782 @@
+{
+	"info": {
+		"_postman_id": "5bf858ae-53d0-4cc4-a5a1-cda69e6916d6",
+		"name": "Subscription Feature",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "46051826",
+		"_collection_link": "https://libra-3247297.postman.co/workspace/libra's-Workspace~52cb12be-7f42-4c23-844b-c9c46f39132e/collection/46051826-5bf858ae-53d0-4cc4-a5a1-cda69e6916d6?action=share&source=collection_link&creator=46051826"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}{{port}}{{api-version}}users"
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{server}}{{port}}{{api-version}}users/:id",
+							"host": [
+								"{{server}}{{port}}{{api-version}}users"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "22"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "view",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}{{port}}{{api-version}}users/:id",
+							"host": [
+								"{{server}}{{port}}{{api-version}}users"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "21"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"GeGe123@gmail.com\",\n    \"username\": \"Gege\",\n    \"password\": \"12345678\",\n    \"phone\": \"077889905\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}{{port}}{{api-version}}users"
+					},
+					"response": []
+				},
+				{
+					"name": "deposit",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}{{port}}{{api-version}}users/deposit/:id",
+							"host": [
+								"{{server}}{{port}}{{api-version}}users"
+							],
+							"path": [
+								"deposit",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sub-Plan",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Super Plan\",    \n    \"currency\": \"USD\",     // Constant currency : USD|KHR|GBP|JPY|INR|CNY \n    \"period\": \"MONTHLY\",       // Constant period: MONTHLY|YEAR|WEEKLY|DAY \n    \"price\": 69.98,\n    \"participate\": 4,\n    \"description\": \"Unlimited\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}{{port}}{{api-version}}subscription-plans"
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Basic\",    \n    \"currency\": \"USD\",     // Constant currency : USD|KHR|GBP|JPY|INR|CNY \n    \"period\": \"WEEKLY\",       // Constant period: MONTHLY|YEAR|WEEKLY|DAY \n    \"price\": 4353.253,\n    \"description\": \"Most recommend for user who just start\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}{{port}}{{api-version}}subscription-plans/:id",
+							"host": [
+								"{{server}}{{port}}{{api-version}}subscription-plans"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}{{port}}{{api-version}}front/subscription-plans",
+							"host": [
+								"{{server}}{{port}}{{api-version}}front"
+							],
+							"path": [
+								"subscription-plans"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "keyword",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "view",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}{{port}}{{api-version}}front/subscription-plans/:id",
+							"host": [
+								"{{server}}{{port}}{{api-version}}front"
+							],
+							"path": [
+								"subscription-plans",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "21"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Subscription",
+			"item": [
+				{
+					"name": "Payment",
+					"item": [
+						{
+							"name": "verify",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{token}}"
+									}
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{server}}{{port}}{{api-version}}payments/check?code=394113_431341",
+									"host": [
+										"{{server}}{{port}}{{api-version}}payments"
+									],
+									"path": [
+										"check"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "394113_431341"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Code",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{server}}{{port}}{{api-version}}payment/check?code=394113_431341",
+											"host": [
+												"{{server}}{{port}}{{api-version}}payment"
+											],
+											"path": [
+												"check"
+											],
+											"query": [
+												{
+													"key": "code",
+													"value": "394113_431341"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "",
+									"header": [],
+									"cookie": [
+										{
+											"expires": "Invalid Date",
+											"domain": "",
+											"path": ""
+										}
+									],
+									"body": "- Generate uuid then plus with reference and you will get code when put them together \nEx: \n    + uuid : 392kfafa , 7 lengths\n    + reference : SUB35d82bc00000025 \n    => code = reference + \"_\" + uuid "
+								}
+							]
+						},
+						{
+							"name": "view",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{token}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{server}}{{port}}{{api-version}}payments/:id",
+									"host": [
+										"{{server}}{{port}}{{api-version}}payments"
+									],
+									"path": [
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "11"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Invoice",
+					"item": [
+						{
+							"name": "view",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{token}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{server}}{{port}}{{api-version}}invoices/:id",
+									"host": [
+										"{{server}}{{port}}{{api-version}}invoices"
+									],
+									"path": [
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "25"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "generate (Progressing)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{token}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"url": "{{server}}{{port}}{{api-version}}invoice/data"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}{{port}}{{api-version}}subscribes",
+							"host": [
+								"{{server}}{{port}}{{api-version}}subscribes"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "keyword",
+									"value": "",
+									"description": "name,  username , email and job",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "",
+									"description": "Format: ACTIVE, CANCELLED, SUSPENDED, EXPIRED",
+									"disabled": true
+								},
+								{
+									"key": "startDate",
+									"value": "",
+									"description": "Format: yyyy-MM-dd",
+									"disabled": true
+								},
+								{
+									"key": "endDate",
+									"value": "",
+									"description": "Format: yyyy-MM-dd",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "view",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}{{port}}{{api-version}}subscribes/:id",
+							"host": [
+								"{{server}}{{port}}{{api-version}}subscribes"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "21"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"autoRenew\": true,\n    \"plan\": {\n        \"plan_id\":21,\n        \"ref\": \"plan_96d4b\"\n    },\n    \"user\": {\n        \"username\": \"Admin\",\n        \"email\": \"admin123@gmail.com\",\n        \"phone\": \"056888909\"\n    },\n    \"payment\": {\n        \"paymentMethod\": \"MASTER_CARD\",\n        \"billingAddress\": {\n            \"street\":\"305A\",\n            \"city\": \"Phnom Penh\",\n            \"state\": \"Torl Kok\",\n            \"zipCode\": 12298\n        }\n    }   \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}{{port}}{{api-version}}subscribes"
+					},
+					"response": []
+				},
+				{
+					"name": "invite user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"emails\": [\"GeGe123@gmail.com\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}{{port}}{{api-version}}subscribes/invite-user/:planRef",
+							"host": [
+								"{{server}}{{port}}{{api-version}}subscribes"
+							],
+							"path": [
+								"invite-user",
+								":planRef"
+							],
+							"variable": [
+								{
+									"key": "planRef",
+									"value": "plan_96d4b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancel plan",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{server}}{{port}}{{api-version}}subscribes/cancel/:userId/:subId",
+							"host": [
+								"{{server}}{{port}}{{api-version}}subscribes"
+							],
+							"path": [
+								"cancel",
+								":userId",
+								":subId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "22"
+								},
+								{
+									"key": "subId",
+									"value": "39"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Registration",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let json = pm.response.json();",
+									"let token = json.data?.token;",
+									"if(token){",
+									"    pm.environment.set(\"token\", token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin123@gmail.com\",\n    \"username\": \"Admin\",\n    \"password\": \"admin888\",\n    \"job\": \"GM\",\n    \"phone\": \"056888909\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}{{port}}{{api-version}}auth/register"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let json = pm.response.json();",
+									"let token = json.data?.token;",
+									"if(token){",
+									"    pm.environment.set(\"token\", token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\":\"DeDE\",\n    \"password\": \"12345678\",\n    \"code\": \"OTWY\",\n    \"uuid\": \"{{uuid-value}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}{{port}}{{api-version}}auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Generate code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let json = pm.response.json();",
+									"let uuid = json.data.uuid;",
+									"if(uuid){",
+									"    pm.environment.set(\"uuid-value\",uuid);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}{{port}}{{api-version}}captcha",
+							"host": [
+								"{{server}}{{port}}{{api-version}}captcha"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": "1234",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "View code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}{{port}}{{api-version}}image-code?uuid={{uuid-value}}",
+							"host": [
+								"{{server}}{{port}}{{api-version}}image-code"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": "{{uuid-value}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
